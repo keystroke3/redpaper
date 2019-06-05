@@ -8,7 +8,7 @@ from PIL import Image
 from io import BytesIO
 from fractions import Fraction as fr
 
-import wall_set
+from wall_set import set_wallpaper
 
 # define directoires
 pictures = os.path.join(os.environ.get("HOME"), "Pictures", "Redpaper")
@@ -84,4 +84,4 @@ def wall_dl():
 
 auth()
 wall_dl()
-wall_set.set_wallpaper()
+set_wallpaper()
