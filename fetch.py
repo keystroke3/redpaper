@@ -8,6 +8,7 @@ from PIL import Image
 from io import BytesIO
 from fractions import Fraction as fr
 
+import wall_set
 
 # define directoires
 pictures = os.path.join(os.environ.get("HOME"), "Pictures", "Redpaper")
@@ -16,7 +17,7 @@ post_attr_file = os.path.join(os.environ.get("HOME"), ".redpaper", "post_attr")
 os.chdir(redpaper_dir)
 
 
-def fetch():
+def auth():
     # Authenticate with Reddit using Auth0
     reddit = praw.Reddit(client_id="OTiCnaMKYCGzrA",
                          client_secret=None,
@@ -38,6 +39,8 @@ def fetch():
             attrs.write("\r")
     os.chdir(pictures)
 
+
+def wall_dl():
     with open(post_attr_file, "r") as links:
         csvread = csv.reader(links, delimiter="\t")
         next(links)
@@ -76,6 +79,9 @@ def fetch():
                 else:
                     continue
 
-    print("Done")
+    print("Done downloading")
 
-fetch()
+
+auth()
+wall_dl()
+wall_set.set_wallpaper()

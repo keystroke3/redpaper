@@ -1,24 +1,12 @@
-# x = 6
+# def decorator_func)(*args):
+#     def wrapper_func():
+#         do something
+#         return something
+    
+# @decorator_func
+# def display():
+#     do something else
 
+# the decorator function in this case is the same as saying:
 
-# def example(x):
-
-#     print(x)
-#     x += 20
-#     print(x)
-#     return x
-
-
-# x = example(x)
-# print(x)
-
-x = 6
-def example(modify):
- 
-    print(modify)
-    modify+=5
-    print(modify)
-    return modify
- 
-x = example(x)
-print(x)
+# display = decorator_function(display)
