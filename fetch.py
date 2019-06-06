@@ -44,6 +44,7 @@ def auth():
 
 
 def wall_dl():
+    auth()
     with open(post_attr_file, "r") as links:
         csvread = csv.reader(links, delimiter="\t")
         next(links)
@@ -94,7 +95,3 @@ def wall_dl():
                     continue
 
     print("Done downloading")
-    set_wallpaper()
-
-auth()
-wall_dl()

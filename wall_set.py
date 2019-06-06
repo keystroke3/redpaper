@@ -13,19 +13,21 @@ options = []
 
 
 def choose_random_wall():
-    # choose a random wallpaper
+    """Selects a random file from all the previous downloads"""
     global path
     selected = random.choice(os.listdir(pictures))
     path = os.path.join(pictures, selected)
 
 
 def choose_by_time():
+    """ Chooses a random file from the recently downloaded files"""
     global path
     with open(saved_walls) as s:
         for line in s.readlines():
             options.append(line.rstrip())
     selected = random.choice(options)
     path = os.path.join(pictures, selected)
+
 
 choose_by_time()
 
@@ -127,5 +129,3 @@ def linux_wallpaper():
         print("Command to set wallpaper returned non-zero exit code."
               " Please file an issue or check your custom "
               "command if you have set one in the configuration file.")
-
-set_wallpaper()
