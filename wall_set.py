@@ -5,18 +5,29 @@ from subprocess import Popen
 import random
 
 global path
-global pictures
 pictures = os.path.join(os.environ.get("HOME"), "Pictures", "Redpaper")
+saved_walls = os.path.join(os.environ.get("HOME"), ".redpaper", "saved")
 system = platform.system()
 
+options = []
 
-def choose_wall():
+
+def choose_random_wall():
+    # choose a random wallpaper
     global path
-    choice = random.choice(os.listdir(pictures))
-    path = os.path.join(pictures, choice)
+    selected = random.choice(os.listdir(pictures))
+    path = os.path.join(pictures, selected)
 
 
-choose_wall()
+def choose_by_time():
+    global path
+    with open(saved_walls) as s:
+        for line in s.readlines():
+            options.append(line.rstrip())
+    selected = random.choice(options)
+    path = os.path.join(pictures, selected)
+
+choose_by_time()
 
 
 def wall_change(*popenargs, timeout=None, **kwargs):
@@ -43,11 +54,12 @@ def set_wallpaper():
     # if system == "Windows":
     #     ctypes.windll.user32.SystemParametersInfoW(
     #         0x14, 0, config.walldir + "\\wallpaper.bmp", 0x3)
+    # choose_random_wall()
     if system == "Linux":
         linux_wallpaper()
     else:
         print("Sorry, you system is not supported at the moment")
-    print("wallpaper set command was run")
+    print(f"Wallpaper was set to: {path.strip(pictures)}")
 
 
 def check_de(current_de, list_of_de):
@@ -59,64 +71,61 @@ def check_de(current_de, list_of_de):
 def linux_wallpaper():
     de = os.environ.get('DESKTOP_SESSION')
     try:
-        if check_de(de, ["gnome", "gnome-xorg", "gnome-wayland", "unity", "ubuntu", "ubuntu-xorg", "budgie-desktop"]):
-            wall_change(["gsettings", "set", "org.gnome.desktop.background", "picture-uri",
+        if check_de(de, ["gnome", "gnome-xorg", "gnome-wayland", "unity",
+                         "ubuntu", "ubuntu-xorg", "budgie-desktop"]):
+            wall_change(["gsettings", "set", "org.gnome.desktop.background",
+                         "picture-uri",
                          "file://%s" % path])
+
         elif check_de(de, ["cinnamon"]):
-            wall_change(["gsettings", "set", "org.cinnamon.desktop.background", "picture-uri",
+            wall_change(["gsettings", "set", "org.cinnamon.desktop.background",
+                         "picture-uri",
                          "file://%s" % path])
-        # FIXME: fix this code to better support pantheon:
-        
-        # elif check_de(de, ["pantheon"]):
-        #     """Some disgusting hacks so that Pantheon will update the wallpaper
-        #     If the filename isn't changed, the wallpaper doesn't either"""
-        #     files = os.listdir(config.walldir)
-        #     for file in files:
-        #         if re.search('wallpaper[0-9]+\.jpg', file) is not None:
-        #             os.remove(config.walldir + "/" + file)            # files = os.listdir(config.walldir)
-        #     for file in files:
-        #         if re.search('wallpaper[0-9]+\.jpg', file) is not None:
-        #             os.remove(config.walldir + "/" + file)
-        #     randint = random.randint(0, 65535)
-        #     randpath = os.path.expanduser(
-        #         config.walldir + "/wallpaper%s.jpg" % randint)
-        #     shutil.copyfile(path, randpath)
-        #     randint = random.randint(0, 65535)
-        #     randpath = os.path.expanduser(
-        #         config.walldir + "/wallpaper%s.jpg" % randint)
-        #     shutil.copyfile(path, randpath)
-        #     wall_change(["gsettings", "set", "org.gnome.desktop.background", "picture-uri",
-        #                 "file://%s" % randpath])
+
+        # TODO: fix this code to better support pantheon
+
         elif check_de(de, ["mate"]):
-            wall_change(["gsettings", "set", "org.mate.background", "picture-filename",
-                         "'%s'" % path])
+            wall_change(["gsettings", "set", "org.mate.background",
+                         "picture-filename", "'%s'" % path])
+
         elif check_de(de, ["xfce", "xubuntu"]):
-            # Light workaround here, just need to toggle the wallpaper from null to the original filename
-            # xfconf props aren't 100% consistent so light workaround for that too
-            props = check_output(['xfconf-query', '-c', 'xfce4-desktop', '-p', '/backdrop', '-l'])\
+            # Light workaround here, just need to toggle the wallpaper
+            #  from null to the original filename
+            # xfconf props aren't 100% consistent so light workaround
+            #  for that too
+            props = check_output(['xfconf-query', '-c', 'xfce4-desktop', '-p',
+                                  '/backdrop', '-l'])\
                 .decode("utf-8").split('\n')
             for prop in props:
                 if "last-image" in prop or "image-path" in prop:
                     wall_change(
-                        ["xfconf-query", "-c", "xfce4-desktop", "-p", prop, "-s", "''"])
+                        ["xfconf-query", "-c", "xfce4-desktop", "-p", prop,
+                         "-s", "''"])
                     wall_change(["xfconf-query", "-c", "xfce4-desktop",
                                  "-p", prop, "-s" "'%s'" % path])
                 if "image-show" in prop:
                     wall_change(
-                        ["xfconf-query", "-c", "xfce4-desktop", "-p", prop, "-s", "'true'"])
+                        ["xfconf-query", "-c", "xfce4-desktop", "-p", prop,
+                         "-s", "'true'"])
+
         elif check_de(de, ["lubuntu", "Lubuntu"]):
             wall_change(["pcmanfm", "-w", "%s" % path])
+
         elif check_de(de, ["i3", "bspwm"]):
             wall_change(["feh", "--bg-fill", path])
+
         elif check_de(de, ["sway"]):
             wall_change(["swaymsg", "output * bg %s fill" % path])
+
         else:
             print("Your DE could not be detected to set the wallpaper. "
-                  "You need to set the 'setcommand' paramter at ~/.config/wallpaper-reddit. "
+                  "You need to set the 'setcommand' paramter at"
+                  "~/.config/wallpaper-reddit. "
                   "When you get it working, please file an issue.")
             sys.exit(1)
     except:
-        print("Command to set wallpaper returned non-zero exit code.  Please file an issue or check your custom "
+        print("Command to set wallpaper returned non-zero exit code."
+              " Please file an issue or check your custom "
               "command if you have set one in the configuration file.")
 
 set_wallpaper()

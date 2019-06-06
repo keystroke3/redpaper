@@ -10,10 +10,13 @@ from fractions import Fraction as fr
 
 from wall_set import set_wallpaper
 
+
 # define directoires
 pictures = os.path.join(os.environ.get("HOME"), "Pictures", "Redpaper")
 redpaper_dir = os.path.join(os.environ.get("HOME"), ".redpaper")
 post_attr_file = os.path.join(os.environ.get("HOME"), ".redpaper", "post_attr")
+saved_walls = os.path.join(os.environ.get("HOME"), ".redpaper", "saved")
+
 os.chdir(redpaper_dir)
 
 
@@ -44,11 +47,17 @@ def wall_dl():
     with open(post_attr_file, "r") as links:
         csvread = csv.reader(links, delimiter="\t")
         next(links)
+        if os.path.isfile(saved_walls) is True:
+            os.remove(saved_walls)
+
         for link in csvread:
             # check if the file aready exists
             file_name = link[0]+".jpg"
             if os.path.isfile(file_name) is True:
                 print(f"{file_name} already exists...skipping")
+                with open(saved_walls, "a") as s:
+                            s.write(file_name)
+                            s.write("\n")
                 continue
             else:
                 try:
@@ -73,15 +82,19 @@ def wall_dl():
                         with open(file_name, "wb") as image:
                             image.write(r.content)
                             print(file_name, "saved")
+                        with open(saved_walls, "a") as s:
+                            s.write(file_name)
+                            s.write("\n")
+
                     except FileNotFoundError:
                         continue
 
                 else:
+                    print("File skipped ...")
                     continue
 
     print("Done downloading")
-
+    set_wallpaper()
 
 auth()
 wall_dl()
-set_wallpaper()
