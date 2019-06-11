@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+
+
 import argparse
 import fetch
 import wall_set
@@ -12,7 +15,7 @@ parser.add_argument("-c", "--change", action="store_true",
 args = parser.parse_args()
 
 
-if __name__ == '__main__':
+def main():
     if args.download:
         print("Downloading wallpaper")
         fetch.wall_dl()
@@ -20,6 +23,10 @@ if __name__ == '__main__':
         print("changing wallpaper")
         wall_set.set_wallpaper()
     else:
-        print("Downloading and setting wallpaper")
+        print("No args were passed")
         fetch.wall_dl()
-        wall_set.set_wallpaper()
+        # wall_set.set_wallpaper()
+
+
+if __name__ == '__main__':
+    main()

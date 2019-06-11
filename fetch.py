@@ -3,7 +3,7 @@ import praw
 import csv
 import requests
 import os
-import logging
+# import logging
 from PIL import Image
 from io import BytesIO
 from fractions import Fraction as fr
@@ -24,11 +24,9 @@ def auth():
     # Authenticate with Reddit using Auth0
     reddit = praw.Reddit(client_id="OTiCnaMKYCGzrA",
                          client_secret=None,
-                         # password = "digitalcreations1",
                          redirect_uri="http://localhost:8080",
                          user_agent="UserAgent",
                          commaScopes="all",
-                         # username = "byteoverload"
                          )
 
     # collect data from reddit
@@ -62,14 +60,14 @@ def wall_dl():
                 continue
             else:
                 try:
-                    print("checking image size")
+                    # print("checking image size")
                     image_link = link[1]
                     payload = requests.get(image_link)
                     img = Image.open(BytesIO(payload.content))
                     width, height = img.size
                     ar = str(fr(width, height))
                 except:
-                    print("Error Getting file")
+                    # print("Error Getting file")
                     continue
 
                 if ar == "16/9" or ar == "16/10":
@@ -93,5 +91,6 @@ def wall_dl():
                 else:
                     print("File skipped ...")
                     continue
-
-    print("Done downloading")
+# wall_dl()
+# set_wallpaper()
+# print("Done downloading")
