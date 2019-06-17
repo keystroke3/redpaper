@@ -1,3 +1,5 @@
+#! /usr/bin/env python
+
 import os
 import platform
 import ctypes
@@ -29,7 +31,19 @@ def choose_by_time():
     path = os.path.join(pictures, selected)
 
 
-choose_by_time()
+def select_next_wall():
+    """chooses the wallpaper in the order in which they were downloaded"""
+    global path
+    file_num = 0
+    with open(saved_walls) as s:
+        for line in s.readlines():
+            options.append(line.rstrip())
+    print(options[file_num])
+
+    # path = os.path.join(pictures, selected)
+
+# choose_by_time()
+select_next_wall()
 
 
 def wall_change(*popenargs, timeout=None, **kwargs):
