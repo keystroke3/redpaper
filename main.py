@@ -15,25 +15,25 @@ parser.add_argument("-c", "--change", action="store_true",
                     help="sets a wallpaper without getting new ones")
 parser.add_argument("-a", "--all", action="store_true",
                     help="Download new wallpapers and set one of them")
+parser.add_argument("-l", "--limit",
+                    help="Number of wallpapers to look for. Default = 5")
 
 args = parser.parse_args()
 
 
 def main():
     if args.download:
-        print("Downloading wallpaper")
-        fetch.wall_dl()
+        if args.limit:
+            fetch.d_limit = int(args.limit)
+            print(fetch.d_limit)
+            fetch.wall_dl()
+        else:
+            fetch.wall_dl()
     elif args.change:
-        print("changing wallpaper")
         wall_set.set_wallpaper()
     elif args.all:
-        print("Download and set wallpaper")
         fetch.wall_dl()
         wall_set.set_wallpaper()
-    else:
-        args.parser.help()
-        parser.print_help()
-        # wall_set.set_wallpaper()
 
 
 if __name__ == '__main__':

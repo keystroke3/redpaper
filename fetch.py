@@ -3,7 +3,7 @@ import praw
 import csv
 import requests
 import os
-# import logging
+import logging
 from PIL import Image
 from io import BytesIO
 from fractions import Fraction as fr
@@ -16,6 +16,7 @@ pictures = os.path.join(os.environ.get("HOME"), "Pictures", "Redpaper")
 redpaper_dir = os.path.join(os.environ.get("HOME"), ".redpaper")
 post_attr_file = os.path.join(os.environ.get("HOME"), ".redpaper", "post_attr")
 saved_walls = os.path.join(os.environ.get("HOME"), ".redpaper", "saved")
+d_limit = 5
 
 os.chdir(redpaper_dir)
 
@@ -28,10 +29,10 @@ def auth():
                          user_agent="UserAgent",
                          commaScopes="all",
                          )
-
     # collect data from reddit
     wallpaper = reddit.subreddit("wallpaper+wallpapers")
-    top_paper = wallpaper.hot(limit=10)
+
+    top_paper = wallpaper.hot(limit=d_limit)
 
     with open("post_attr", "w") as attrs:
         print("Writing attributes")
@@ -60,17 +61,18 @@ def wall_dl():
                 continue
             else:
                 try:
-                    # print("checking image size")
+                    print("checking image size")
                     image_link = link[1]
                     payload = requests.get(image_link)
                     img = Image.open(BytesIO(payload.content))
                     width, height = img.size
-                    ar = str(fr(width, height))
+                    # ar = str(fr(width, height))
+                    ar = width/height
                 except:
-                    # print("Error Getting file")
+                    print("Error Getting file ... skipping")
                     continue
 
-                if ar == "16/9" or ar == "16/10":
+                if ar > 1.2:
                     try:
                         r = requests.get(link[1])
                     except:
@@ -91,6 +93,5 @@ def wall_dl():
                 else:
                     print("File skipped ...")
                     continue
-# wall_dl()
-# set_wallpaper()
-# print("Done downloading")
+
+    print("Done downloading")

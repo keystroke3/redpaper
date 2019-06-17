@@ -5,10 +5,11 @@ import platform
 import ctypes
 from subprocess import Popen
 import random
+import fetch
 
 global path
-pictures = os.path.join(os.environ.get("HOME"), "Pictures", "Redpaper")
-saved_walls = os.path.join(os.environ.get("HOME"), ".redpaper", "saved")
+pictures = fetch.pictures
+saved_walls = fetch.saved_walls
 system = platform.system()
 
 options = []
