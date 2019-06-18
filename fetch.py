@@ -3,25 +3,27 @@ import praw
 import csv
 import requests
 import os
-import logging
+import json
+import pickle
 from PIL import Image
 from io import BytesIO
-from fractions import Fraction as fr
 
-from wall_set import set_wallpaper
-
-
+global counter
 # define directoires
 pictures = os.path.join(os.environ.get("HOME"), "Pictures", "Redpaper")
-redpaper_dir = os.path.join(os.environ.get("HOME"), ".redpaper")
+working_dir = os.path.join(os.environ.get("HOME"), ".redpaper")
 post_attr_file = os.path.join(os.environ.get("HOME"), ".redpaper", "post_attr")
-saved_walls = os.path.join(os.environ.get("HOME"), ".redpaper", "saved")
+# saved_walls = os.path.join(os.environ.get("HOME"), ".redpaper", "saved")
 d_limit = 5
-
-os.chdir(redpaper_dir)
+wall_names = {}
+counter = 1
+"""[summary]
+"""
+os.chdir(working_dir)
 
 
 def auth():
+    global counter
     # Authenticate with Reddit using Auth0
     reddit = praw.Reddit(client_id="OTiCnaMKYCGzrA",
                          client_secret=None,
@@ -43,21 +45,22 @@ def auth():
 
 
 def wall_dl():
+    global counter
     auth()
     with open(post_attr_file, "r") as links:
         csvread = csv.reader(links, delimiter="\t")
-        next(links)
-        if os.path.isfile(saved_walls) is True:
-            os.remove(saved_walls)
 
         for link in csvread:
             # check if the file aready exists
             file_name = link[0]+".jpg"
             if os.path.isfile(file_name) is True:
                 print(f"{file_name} already exists...skipping")
-                with open(saved_walls, "a") as s:
-                            s.write(file_name)
-                            s.write("\n")
+                wall_names[counter] = str(file_name)
+                counter += 1
+                # with open(saved_walls, "a") as s:
+                #             s.write(file_name)
+                #             s.write("\n")
+
                 continue
             else:
                 try:
@@ -66,7 +69,6 @@ def wall_dl():
                     payload = requests.get(image_link)
                     img = Image.open(BytesIO(payload.content))
                     width, height = img.size
-                    # ar = str(fr(width, height))
                     ar = width/height
                 except:
                     print("Error Getting file ... skipping")
@@ -83,9 +85,8 @@ def wall_dl():
                         with open(file_name, "wb") as image:
                             image.write(r.content)
                             print(file_name, "saved")
-                        with open(saved_walls, "a") as s:
-                            s.write(file_name)
-                            s.write("\n")
+                        wall_names[counter] = str(file_name)
+                        counter += 1
 
                     except FileNotFoundError:
                         continue
@@ -94,4 +95,9 @@ def wall_dl():
                     print("File skipped ...")
                     continue
 
-    print("Done downloading")
+    os.chdir(working_dir)
+    with open("wall_data.json", "w") as wall_data:
+        json.dump(wall_names, wall_data, indent=2)
+    selection_point = 0
+    with open("point.pickle", "wb") as point:
+        pickle.dump(selection_point, point)

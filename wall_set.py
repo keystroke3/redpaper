@@ -3,56 +3,67 @@
 import os
 import platform
 import ctypes
-from subprocess import Popen
 import random
 import fetch
+import json
+import pickle
+from subprocess import Popen
 
 global path
 pictures = fetch.pictures
-saved_walls = fetch.saved_walls
 system = platform.system()
 
-options = []
+os.chdir(fetch.working_dir)
+
+with open("wall_data.json", "r") as data:
+    saved_walls = json.load(data)
 
 
-def choose_random_wall():
+def random_any():
     """Selects a random file from all the previous downloads"""
     global path
     selected = random.choice(os.listdir(pictures))
     path = os.path.join(pictures, selected)
 
 
-def choose_by_time():
+def random_recent():
     """ Chooses a random file from the recently downloaded files"""
     global path
-    with open(saved_walls) as s:
-        for line in s.readlines():
-            options.append(line.rstrip())
-    selected = random.choice(options)
-    path = os.path.join(pictures, selected)
+
+    random_key = str(random.randint(1, len(saved_walls)))
+    random_selected = str(saved_walls.get(random_key))
+    path = os.path.join(pictures, random_selected)
+    print(random_key)
+    print(path)
 
 
-def select_next_wall():
-    """chooses the wallpaper in the order in which they were downloaded"""
+def sequetial():
     global path
-    file_num = 0
-    with open(saved_walls) as s:
-        for line in s.readlines():
-            options.append(line.rstrip())
-    print(options[file_num])
+    """chooses the wallpaper in the order in which they were downloaded"""
+    with open("point.pickle", "rb+") as data:
+        # selection_point is used to store the value of the current wallpaper
+        # it is necessary to have so that wallpapers don't repeat themselves
+        selection_point = pickle.load(data)
+        # the value of selection_point will be loaded and incrimened evrytime
+        # this finction is run.
+        if selection_point == len(saved_walls):
+            selection_point = 1
+            img_name = str(saved_walls.get(str(selection_point)))
+            path = os.path.join(pictures, str(img_name))
 
-    # path = os.path.join(pictures, selected)
-
-# choose_by_time()
-select_next_wall()
+        elif selection_point < len(saved_walls):
+            selection_point += 1
+            img_name = str(saved_walls.get(str(selection_point)))
+            path = os.path.join(pictures, str(img_name))
+    # the new value of selection point is stored for the next run
+    with open("point.pickle", "wb") as point:
+        pickle.dump(selection_point, point)
 
 
 def wall_change(*popenargs, timeout=None, **kwargs):
     """Run command with arguments.  Wait for command to complete or
     timeout, then return the returncode attribute.
-
     The arguments are the same as for the Popen constructor.  Example:
-
     retcode = call(["ls", "-l"])
     """
     with Popen(*popenargs, **kwargs) as p:
@@ -71,7 +82,6 @@ def set_wallpaper():
     # if system == "Windows":
     #     ctypes.windll.user32.SystemParametersInfoW(
     #         0x14, 0, config.walldir + "\\wallpaper.bmp", 0x3)
-    # choose_random_wall()
     if system == "Linux":
         linux_wallpaper()
     else:

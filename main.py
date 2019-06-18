@@ -17,6 +17,10 @@ parser.add_argument("-a", "--all", action="store_true",
                     help="Download new wallpapers and set one of them")
 parser.add_argument("-l", "--limit",
                     help="Number of wallpapers to look for. Default = 5")
+parser.add_argument("-R", "--any", action="store_true",
+                    help="Sets a random wallpaper form all the downloads")
+parser.add_argument("-r", "--recent", action="store_true",
+                    help="Sets a random wallpaper from recent downloads")
 
 args = parser.parse_args()
 
@@ -30,9 +34,18 @@ def main():
         else:
             fetch.wall_dl()
     elif args.change:
-        wall_set.set_wallpaper()
+        if args.any:
+            wall_set.random_any()
+            wall_set.set_wallpaper()
+        elif args.recent:
+            wall_set.random_recent()
+            wall_set.set_wallpaper()
+        else:
+            wall_set.sequetial()
+            wall_set.set_wallpaper()
     elif args.all:
         fetch.wall_dl()
+        wall_set.sequetial()
         wall_set.set_wallpaper()
 
 
