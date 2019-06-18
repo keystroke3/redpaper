@@ -29,7 +29,6 @@ def main():
     if args.download:
         if args.limit:
             fetch.d_limit = int(args.limit)
-            print(fetch.d_limit)
             fetch.wall_dl()
         else:
             fetch.wall_dl()
@@ -44,7 +43,9 @@ def main():
             wall_set.sequetial()
             wall_set.set_wallpaper()
     elif args.all:
-        fetch.wall_dl()
+        if args.limit:
+            fetch.d_limit = int(args.limit)
+            fetch.wall_dl()
         wall_set.sequetial()
         wall_set.set_wallpaper()
 
