@@ -6,4 +6,5 @@ cp point.pickle post_attr wall_data.json
 sudo ln -sf /opt/redpaper/main.py /usr/bin/redpaper
 chmod +x /opt/redpaper/main.py
 chmod +x /usr/bin/redpaper
+python3 -m pip install praw
 hash -r
