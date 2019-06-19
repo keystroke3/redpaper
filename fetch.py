@@ -50,6 +50,7 @@ def auth():
 
 
 def wall_dl():
+    dir_check()
     global counter
     auth()
     with open(post_attr_file, "r") as links:
