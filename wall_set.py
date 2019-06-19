@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#!/usr/bin/python3
 
 import os
 import platform
@@ -14,6 +14,7 @@ pictures = fetch.pictures
 system = platform.system()
 
 os.chdir(fetch.working_dir)
+
 
 with open("wall_data.json", "r") as data:
     saved_walls = json.load(data)

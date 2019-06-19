@@ -1,4 +1,4 @@
-#!/home/ted/.pyenv/shims/python
+#!/usr/bin/python3
 import praw
 import csv
 import requests
@@ -17,12 +17,17 @@ post_attr_file = os.path.join(os.environ.get("HOME"), ".redpaper", "post_attr")
 d_limit = 5
 wall_names = {}
 counter = 1
-"""[summary]
-"""
-os.chdir(working_dir)
+
+
+def dir_check():
+    if not os.path.exists(pictures):
+        os.mkdir(pictures)
+    if not os.path.exists(working_dir):
+        os.mkdir(working_dir)
 
 
 def auth():
+    os.chdir(working_dir)
     global counter
     # Authenticate with Reddit using Auth0
     reddit = praw.Reddit(client_id="OTiCnaMKYCGzrA",
