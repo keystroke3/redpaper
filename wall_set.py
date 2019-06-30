@@ -9,7 +9,7 @@ import json
 import pickle
 from subprocess import Popen
 
-global path
+path = ""
 pictures = fetch.pictures
 system = platform.system()
 
@@ -34,8 +34,6 @@ def random_recent():
     random_key = str(random.randint(1, len(saved_walls)))
     random_selected = str(saved_walls.get(random_key))
     path = os.path.join(pictures, random_selected)
-    print(random_key)
-    print(path)
 
 
 def sequetial():
@@ -87,7 +85,7 @@ def set_wallpaper():
         linux_wallpaper()
     else:
         print("Sorry, you system is not supported at the moment")
-    print(f"Wallpaper was set to: {path.strip(pictures)}")
+    # print(f"Wallpaper was set to: {path.strip(pictures)}")
 
 
 def check_de(current_de, list_of_de):
@@ -151,7 +149,12 @@ def linux_wallpaper():
                   "~/.config/wallpaper-reddit. "
                   "When you get it working, please file an issue.")
             sys.exit(1)
+        from gi.repository import Notify
+        Notify.init("Redpaper")
+        Notify.Notification.new("Wallpaper changed").show()
+
     except:
-        print("Command to set wallpaper returned non-zero exit code."
-              " Please file an issue or check your custom "
-              "command if you have set one in the configuration file.")
+        import traceback
+        print(traceback.format_exc())
+        print("You can raise the issue with the devs here: "
+            "https://github.com/keystroke3/redpaper/issues")

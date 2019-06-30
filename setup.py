@@ -3,7 +3,7 @@
 from setuptools import setup, find_packages
 setup(
     name="RedPaper",
-    version="0.0.1",
+    version="0.0.2",
     install_requires=['docutils>=0.3', 'praw>=6.2.0'],
 
     # metadata to display on PyPI

@@ -7,6 +7,7 @@ import json
 import pickle
 from PIL import Image
 from io import BytesIO
+from gi.repository import Notify
 
 global counter
 # define directoires
@@ -50,6 +51,9 @@ def auth():
 
 
 def wall_dl():
+    from gi.repository import Notify
+    Notify.init("Redpaper")
+    Notify.Notification.new("wallpaper download started").show()
     dir_check()
     global counter
     auth()
@@ -107,3 +111,6 @@ def wall_dl():
     selection_point = 0
     with open("point.pickle", "wb") as point:
         pickle.dump(selection_point, point)
+
+    Notify.init("Redpaper")
+    Notify.Notification.new("Finished downloading wallpapers").show()
