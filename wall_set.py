@@ -2,19 +2,23 @@
 
 import os
 import platform
-import ctypes
 import random
-import fetch
 import json
 import pickle
 from subprocess import Popen
+from fetch import pictures, working_dir
+
+normal = "\033[00m"
+red_error = "\033[31;47m"
+green = "\033[92m"
+red = "\033[91m"
+blue = "\033[94m"
 
 path = ""
-pictures = fetch.pictures
+# pictures = fetch.pictures
 system = platform.system()
 
-os.chdir(fetch.working_dir)
-
+os.chdir(working_dir)
 
 with open("wall_data.json", "r") as data:
     saved_walls = json.load(data)
@@ -75,16 +79,10 @@ def wall_change(*popenargs, timeout=None, **kwargs):
 
 
 def set_wallpaper():
-    # TODO: create support for MacOS
-    # TODO: create support for windows
-
-    # if system == "Windows":
-    #     ctypes.windll.user32.SystemParametersInfoW(
-    #         0x14, 0, config.walldir + "\\wallpaper.bmp", 0x3)
     if system == "Linux":
         linux_wallpaper()
     else:
-        print("Sorry, you system is not supported at the moment")
+        print(f"{red}Sorry, you system is not supported at the moment{normal}")
     # print(f"Wallpaper was set to: {path.strip(pictures)}")
 
 
@@ -97,22 +95,30 @@ def check_de(current_de, list_of_de):
 def linux_wallpaper():
     de = os.environ.get('DESKTOP_SESSION')
     try:
-        if check_de(de, ["gnome", "gnome-xorg", "gnome-wayland", "unity",
-                         "ubuntu", "ubuntu-xorg", "budgie-desktop"]):
-            wall_change(["gsettings", "set", "org.gnome.desktop.background",
-                         "picture-uri",
-                         "file://%s" % path])
+        if check_de(de, [
+                "gnome", "gnome-xorg", "gnome-wayland", "unity", "ubuntu",
+                "ubuntu-xorg", "budgie-desktop"
+        ]):
+            wall_change([
+                "gsettings", "set", "org.gnome.desktop.background",
+                "picture-uri",
+                "file://%s" % path
+            ])
 
         elif check_de(de, ["cinnamon"]):
-            wall_change(["gsettings", "set", "org.cinnamon.desktop.background",
-                         "picture-uri",
-                         "file://%s" % path])
+            wall_change([
+                "gsettings", "set", "org.cinnamon.desktop.background",
+                "picture-uri",
+                "file://%s" % path
+            ])
 
         # TODO: fix this code to better support pantheon
 
         elif check_de(de, ["mate"]):
-            wall_change(["gsettings", "set", "org.mate.background",
-                         "picture-filename", "'%s'" % path])
+            wall_change([
+                "gsettings", "set", "org.mate.background", "picture-filename",
+                "'%s'" % path
+            ])
 
         elif check_de(de, ["xfce", "xubuntu"]):
             # Light workaround here, just need to toggle the wallpaper
@@ -124,15 +130,20 @@ def linux_wallpaper():
                 .decode("utf-8").split('\n')
             for prop in props:
                 if "last-image" in prop or "image-path" in prop:
-                    wall_change(
-                        ["xfconf-query", "-c", "xfce4-desktop", "-p", prop,
-                         "-s", "''"])
-                    wall_change(["xfconf-query", "-c", "xfce4-desktop",
-                                 "-p", prop, "-s" "'%s'" % path])
+                    wall_change([
+                        "xfconf-query", "-c", "xfce4-desktop", "-p", prop,
+                        "-s", "''"
+                    ])
+                    wall_change([
+                        "xfconf-query", "-c", "xfce4-desktop", "-p", prop,
+                        "-s"
+                        "'%s'" % path
+                    ])
                 if "image-show" in prop:
-                    wall_change(
-                        ["xfconf-query", "-c", "xfce4-desktop", "-p", prop,
-                         "-s", "'true'"])
+                    wall_change([
+                        "xfconf-query", "-c", "xfce4-desktop", "-p", prop,
+                        "-s", "'true'"
+                    ])
 
         elif check_de(de, ["lubuntu", "Lubuntu"]):
             wall_change(["pcmanfm", "-w", "%s" % path])
@@ -149,12 +160,9 @@ def linux_wallpaper():
                   "~/.config/wallpaper-reddit. "
                   "When you get it working, please file an issue.")
             sys.exit(1)
-        from gi.repository import Notify
-        Notify.init("Redpaper")
-        Notify.Notification.new("Wallpaper changed").show()
 
     except:
         import traceback
         print(traceback.format_exc())
-        print("You can raise the issue with the devs here: "
-            "https://github.com/keystroke3/redpaper/issues")
+        print(f"{green}You can raise the issue with the devs here: {normal}"
+              f"{green}https://github.com/keystroke3/redpaper/issues{normal}")

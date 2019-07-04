@@ -2,41 +2,56 @@
 import praw
 import csv
 import requests
+import configparser
 import os
 import json
 import pickle
+import settings
+from pathlib import Path
 from PIL import Image
 from io import BytesIO
+import gi
+gi.require_version('Notify', '0.7')
 from gi.repository import Notify
 
 global counter
 # define directoires
-pictures = os.path.join(os.environ.get("HOME"), "Pictures", "Redpaper")
-working_dir = os.path.join(os.environ.get("HOME"), ".redpaper")
-post_attr_file = os.path.join(os.environ.get("HOME"), ".redpaper", "post_attr")
-# saved_walls = os.path.join(os.environ.get("HOME"), ".redpaper", "saved")
-d_limit = 5
+
 wall_names = {}
 counter = 1
+
+config = configparser.ConfigParser()
+config.read("settings.ini")
+
+working_dir = config['settings']['working_dir']
+post_attr_file = config['settings']['post_attr_file']
+wall_data_file = config['settings']['wall_data_file']
+pictures = config['settings']['download_dir']
+d_limit = int(config['settings']['download_limit'])
 
 
 def dir_check():
     if not os.path.exists(pictures):
         os.mkdir(pictures)
-    if not os.path.exists(working_dir):
-        os.mkdir(working_dir)
+    if not os.path.exists(post_attr_file):
+        with open(post_attr_file, "w") as f:
+            f.write("")
+    if not os.path.exists(wall_data_file):
+        with open(wall_data_file, "w") as wall_data:
+            json.dump(wall_names, wall_data, indent=2)
 
 
 def auth():
     os.chdir(working_dir)
     global counter
     # Authenticate with Reddit using Auth0
-    reddit = praw.Reddit(client_id="OTiCnaMKYCGzrA",
-                         client_secret=None,
-                         redirect_uri="http://localhost:8080",
-                         user_agent="UserAgent",
-                         commaScopes="all",
-                         )
+    reddit = praw.Reddit(
+        client_id="OTiCnaMKYCGzrA",
+        client_secret=None,
+        redirect_uri="http://localhost:8080",
+        user_agent="UserAgent",
+        commaScopes="all",
+    )
     # collect data from reddit
     wallpaper = reddit.subreddit("wallpaper+wallpapers")
 
@@ -45,7 +60,7 @@ def auth():
     with open("post_attr", "w") as attrs:
         print("Writing attributes")
         for post in top_paper:
-            attrs.write(str(post.title)+"\t"+(str(post.url)))
+            attrs.write(str(post.title) + "\t" + (str(post.url)))
             attrs.write("\r")
     os.chdir(pictures)
 
@@ -55,6 +70,7 @@ def wall_dl():
     Notify.init("Redpaper")
     Notify.Notification.new("wallpaper download started").show()
     dir_check()
+
     global counter
     auth()
     with open(post_attr_file, "r") as links:
@@ -62,15 +78,11 @@ def wall_dl():
 
         for link in csvread:
             # check if the file aready exists
-            file_name = link[0]+".jpg"
+            file_name = link[0] + ".jpg"
             if os.path.isfile(file_name) is True:
                 print(f"{file_name} already exists...skipping")
                 wall_names[counter] = str(file_name)
                 counter += 1
-                # with open(saved_walls, "a") as s:
-                #             s.write(file_name)
-                #             s.write("\n")
-
                 continue
             else:
                 try:
@@ -79,7 +91,7 @@ def wall_dl():
                     payload = requests.get(image_link)
                     img = Image.open(BytesIO(payload.content))
                     width, height = img.size
-                    ar = width/height
+                    ar = width / height
                 except:
                     print("Error Getting file ... skipping")
                     continue
