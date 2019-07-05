@@ -19,9 +19,10 @@ global counter
 
 wall_names = {}
 counter = 1
-
+settings_file = os.path.join(os.environ.get("HOME"), ".redpaper",
+                             "settings.ini")
 config = configparser.ConfigParser()
-config.read("settings.ini")
+config.read(settings_file)
 
 working_dir = config['settings']['working_dir']
 post_attr_file = config['settings']['post_attr_file']

@@ -35,7 +35,7 @@ def set_settings():
     Writes the changed settings to file.
     """
     global message
-    with open("settings.ini", "w") as configfile:
+    with open(settings_file, "w") as configfile:
         config.write(configfile)
         message = f"{green} Changes made successfully{normal}\n"
 
@@ -88,7 +88,7 @@ def max_dl_choice():
         The number cannot exceed 100.
         Current value is {d_limit}
         {normal}\n
-        {red}q{normal}: {blue}exit to main menu{normal}
+        {red}q{normal}: {blue} main menu{normal}
         >>>
         """)
     try:
@@ -120,8 +120,8 @@ def change_path():
                     {green}Enter the complete path to the new location.
                     This is case sensivite. "Pics" and "pics" are different
                     e.g. /home/user/Pictures\n
-                    Current value is: {pictures}\n{normal}
-                    {red}q{normal} : {blue}quit to main settings{normal}
+                    Current path is: {pictures}\n{normal}
+                    {red}q{normal} : {blue}main settings{normal}
                     >>> """)
     if new_path == "q":
         main_settings()
@@ -151,7 +151,7 @@ def wall_selection():
             {normal}
             {red} 3 {normal}: {blue} from latest downloads in download order
             {normal}
-            {red} q {normal}: {blue} Quit to main settings {normal}\n
+            {red} q {normal}: {blue} main settings {normal}\n
             >>>
             """)
     if selection_mode == "1":
@@ -213,10 +213,10 @@ def main_settings():
             Choose an option:\n{normal}
             {red} 1 {normal}: {blue} Change download location{normal} \n
             {red} 2 {normal}: {blue} Change wallpaper selection method
-            {normal}\n
+            {normal}
             {red} 3 {normal}: {blue} Change the download limit{normal}\n
             {red} r {normal}: {blue} Reset to default {normal}\n
-            {red} q {normal}: {blue} Quit to main menu {normal}\n
+            {red} q {normal}: {blue} main menu {normal}\n
             >>>  """)
     if choice == "1":
         message = "PATH CHANGE MENU\n"

@@ -39,15 +39,15 @@ blue = "\033[94m"
 def quit_choice(*args):
     if not len(args) == 0:
         stay = input(f"""\n
-                {red} 1 {normal}: {blue} Main menu {normal}\n
-                {red} 2 {normal}: {blue} Do it again {normal}\n
-                {red} q {normal}: {blue} Quit {normal}\n
-                >>>  """)
+        {red} 1 {normal}: {blue} Main menu {normal}\n
+        {red} 2 {normal}: {blue} Do it again {normal}\n
+        {red} q {normal}: {blue} Quit {normal}\n
+        >>>  """)
     else:
         stay = input(f"""\n
                 {red} 1 {normal}: {blue} Main menu {normal}\n
                 {red} q {normal}: {blue} Quit {normal}\n
-                >>>  """)
+        >>>  """)
     if stay == "1":
         main_menu()
     elif stay == "2":
