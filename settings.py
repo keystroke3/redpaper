@@ -11,6 +11,10 @@ green = "\033[92m"
 red = "\033[91m"
 blue = "\033[94m"
 
+settings_file = os.path.join(os.environ.get("HOME"), ".redpaper",
+                             "settings.ini")
+
+
 config['settings'] = {
     'download_dir':
     os.path.join(os.environ.get("HOME"), "Pictures", "Redpaper"),
@@ -19,10 +23,32 @@ config['settings'] = {
                                    "post_attr"),
     'wall_data_file': os.path.join(os.environ.get("HOME"), ".redpaper",
                                    "wall_data.json"),
-    'settings_file': os.path.join(os.getcwd(), "settings.ini"),
+    'settings_file': os.path.join(os.environ.get("HOME"), ".redpaper",
+                                  "settings.ini"),
     'Wallpaper_selection_method': "sequential",
     'download_limit': 5,
 }
+
+
+def set_settings():
+    """
+    Writes the changed settings to file.
+    """
+    global message
+    with open("settings.ini", "w") as configfile:
+        config.write(configfile)
+        message = f"{green} Changes made successfully{normal}\n"
+
+if not os.path.exists(settings_file):
+    set_settings()
+else:
+    config.read(settings_file)
+
+working_dir = config['settings']['working_dir']
+pictures = config['settings']['download_dir']
+d_limit = int(config['settings']['download_limit'])
+wall_selection_method = config['settings']['wallpaper_selection_method']
+
 global message
 message = "MAIN SETTINGS MENU \n"
 banner = """
@@ -37,12 +63,16 @@ banner = """
 # os.chdir(config['settings']['working_dir'])
 
 
+def clear():
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+
 def Red():
     """Prints the bunner with whatever message from the operation
     """
     global message
-    red_banner = f"{red}{banner}{normal}"
-    os.system('cls' if os.name == 'nt' else 'clear')
+    red_banner = f"\t\t{red}{banner}{normal}"
+    clear()
     print(red_banner)
     print(message)
 
@@ -55,7 +85,9 @@ def max_dl_choice():
     global message
     max_dl = input(f"""{green}
         Enter the maximum number of wallpaper to attemt to download
-        The number cannot exceed 100.{normal}\n
+        The number cannot exceed 100.
+        Current value is {d_limit}
+        {normal}\n
         {red}q{normal}: {blue}exit to main menu{normal}
         >>>
         """)
@@ -65,8 +97,8 @@ def max_dl_choice():
             message = (f"{green}Please enter a value less than 100{nromal}\n")
             Red()
         else:
-            set_settings()
             config.set('settings', 'download_limit', str(max_dl))
+            set_settings()
             main_settings()
     except ValueError:
             if max_dl == "q" or max_dl == "Q":
@@ -84,10 +116,12 @@ def change_path():
     """
     global message
     Red()
-    new_path = input(f"""{green}Enter the complete path to the new location.
-                        This is case sensivite. "Pics" and "pics" are different
-                    e.g. /home/user/Pictures\n{normal}
-                    {red}q{normal} : {blue}quit to main menu{normal}
+    new_path = input(f"""
+                    {green}Enter the complete path to the new location.
+                    This is case sensivite. "Pics" and "pics" are different
+                    e.g. /home/user/Pictures\n
+                    Current value is: {pictures}\n{normal}
+                    {red}q{normal} : {blue}quit to main settings{normal}
                     >>> """)
     if new_path == "q":
         main_settings()
@@ -104,18 +138,20 @@ def change_path():
 
 
 def wall_selection():
-    
     """
     Allows the user to specify the method to be used when choosing wallpapers
     """
     global message
     Red()
-    selection_mode = input(f"""
+    selection_mode = input(f"""{green}
             select one option bellow to change how wallpapers are selected\n
+            {normal}
             {red} 1 {normal}: {blue} completely random{normal}\n
-            {red} 2 {normal}: {blue} from lastest downloads random order{normal}\n
-            {red} 3 {normal}: {blue} from latest downloads in download order{normal}\n
-            {red} q {normal}: {blue} Quit to main menu {normal}\n
+            {red} 2 {normal}: {blue} from lastest downloads random order
+            {normal}
+            {red} 3 {normal}: {blue} from latest downloads in download order
+            {normal}
+            {red} q {normal}: {blue} Quit to main settings {normal}\n
             >>>
             """)
     if selection_mode == "1":
@@ -137,16 +173,6 @@ def wall_selection():
         error = "ERROR: The path you entered does not exist."
         message = f"{red_error}{error}{normal}\n"
     wall_selection()
-
-
-def set_settings():
-    """
-    Writes the changed settings to file.
-    """
-    global message
-    with open("settings.ini", "w") as configfile:
-        config.write(configfile)
-        message = f"{green} Changes made successfully{normal}\n"
 
 
 def restore_default():
@@ -186,10 +212,11 @@ def main_settings():
             Welcome to redpaper settings menu.
             Choose an option:\n{normal}
             {red} 1 {normal}: {blue} Change download location{normal} \n
-            {red} 2 {normal}: {blue} Change wallpaper selection method{normal}\n
+            {red} 2 {normal}: {blue} Change wallpaper selection method
+            {normal}\n
             {red} 3 {normal}: {blue} Change the download limit{normal}\n
             {red} r {normal}: {blue} Reset to default {normal}\n
-            {red} q {normal}: {blue} Quit {normal}\n
+            {red} q {normal}: {blue} Quit to main menu {normal}\n
             >>>  """)
     if choice == "1":
         message = "PATH CHANGE MENU\n"
@@ -203,8 +230,5 @@ def main_settings():
         message = "RESET MENU\n"
         restore_default()
         main_settings()
-    # elif choice == "x" or choice == "X":
-    #     main_menu()
     elif choice == "q" or choice == "Q":
-        os.system('cls' if os.name == 'nt' else 'clear')
-# main_settings()
+        clear()

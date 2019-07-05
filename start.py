@@ -4,7 +4,7 @@ import argparse
 import configparser
 import fetch
 import wall_set
-from settings import set_settings
+from menu import main_menu
 
 parser = argparse.ArgumentParser(
     description="""This is a simple program that allows you to change
@@ -25,9 +25,6 @@ parser.add_argument("-r", "--recent", action="store_true",
                     help="Sets a random wallpaper from recent downloads")
 
 args = parser.parse_args()
-
-if not os.path.exists("settings.ini"):
-    set_settings()
 
 
 def main():
@@ -53,7 +50,8 @@ def main():
             fetch.wall_dl()
         wall_set.sequetial()
         wall_set.set_wallpaper()
-
+    else:
+        main_menu()
 
 if __name__ == '__main__':
     main()

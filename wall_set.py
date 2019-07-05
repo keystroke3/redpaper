@@ -5,6 +5,7 @@ import platform
 import random
 import json
 import pickle
+import configparser
 from subprocess import Popen
 from fetch import pictures, working_dir
 
@@ -13,6 +14,13 @@ red_error = "\033[31;47m"
 green = "\033[92m"
 red = "\033[91m"
 blue = "\033[94m"
+
+settings_file = os.path.join(os.environ.get("HOME"), ".redpaper",
+                             "settings.ini")
+config = configparser.ConfigParser()
+config.read(settings_file)
+wall_selection_method = config['settings']['wallpaper_selection_method']
+
 
 path = ""
 # pictures = fetch.pictures
@@ -80,6 +88,12 @@ def wall_change(*popenargs, timeout=None, **kwargs):
 
 def set_wallpaper():
     if system == "Linux":
+        if wall_selection_method == "sequential":
+            sequetial()
+        elif wall_selection_method == "random_any":
+            random_any()
+        elif wall_selection_method == "random_recent":
+            random_recent()
         linux_wallpaper()
     else:
         print(f"{red}Sorry, you system is not supported at the moment{normal}")
