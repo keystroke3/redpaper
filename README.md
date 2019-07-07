@@ -11,7 +11,6 @@ day and download them. You can then change the wallpaper using it.
 ![Main Menu](https://raw.githubusercontent.com/keystroke3/redpaper/master/screenshots/main-menu.png)
 
 ## Installaion
-
 Redpaper only works on Linux systems at the moment, therefor only people running Linux  
 can use it.  
 ### Dependancies
@@ -31,7 +30,6 @@ and then
 The other dependancies will be automatically installed.  
 ### Procedure
 When the first two dependancies have been met, you can run the following command to do the install:  
-`git clone https://github.com/keystroke3/redpaper.git && cd redpaper`  
-`sudo sh install.sh`  
+`git clone https://github.com/keystroke3/redpaper.git && cd redpaper && sudo sh install.sh`  
 
-For information on how to use, please refer to the [Wiki](https://github.com/keystroke3/redpaper/wiki)  
+For          information on how to use, please refer to the [Wiki](https://github.com/keystroke3/redpaper/wiki)  
