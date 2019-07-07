@@ -48,7 +48,6 @@ def exit_choice(*args):
             exit_choice(func)
     elif stay == "x" or "X":
         clear()
-        return
 
 
 def main_menu():
@@ -89,5 +88,5 @@ def main_menu():
     elif choice == "x" or choice == "X":
         clear()
     else:
-        message = f"\n{red_error} Choice not understood, try again.{normal}"
+        # message = f"\n{red_error} Choice not understood, try again.{normal}"
         main_menu()

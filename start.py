@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import argparse
+import os
 import configparser
 import fetch
 import wall_set
@@ -25,6 +26,16 @@ parser.add_argument("-r", "--recent", action="store_true",
                     help="Sets a random wallpaper from recent downloads")
 
 args = parser.parse_args()
+
+settings_file = settings_file = os.path.join(os.environ.get("HOME"),
+                                             ".redpaper", "settings.ini")
+config = configparser.ConfigParser()
+config.read(settings_file)
+
+working_dir = config['settings']['working_dir']
+post_attr_file = config['settings']['post_attr_file']
+wall_data_file = config['settings']['wall_data_file']
+d_limit = int(config['settings']['download_limit'])
 
 
 def main():

@@ -11,8 +11,10 @@ green = "\033[92m"
 red = "\033[91m"
 blue = "\033[94m"
 
+
 settings_file = os.path.join(os.environ.get("HOME"), ".redpaper",
                              "settings.ini")
+working_dir = os.path.join(os.environ.get("HOME"), ".redpaper")
 
 
 config['settings'] = {
@@ -23,8 +25,6 @@ config['settings'] = {
                                    "post_attr"),
     'wall_data_file': os.path.join(os.environ.get("HOME"), ".redpaper",
                                    "wall_data.json"),
-    'settings_file': os.path.join(os.environ.get("HOME"), ".redpaper",
-                                  "settings.ini"),
     'Wallpaper_selection_method': "sequential",
     'download_limit': 5,
 }
@@ -35,10 +35,15 @@ def set_settings():
     Writes the changed settings to file.
     """
     global message
-    with open(settings_file, "w") as configfile:
-        config.write(configfile)
-        message = f"{green} Changes made successfully{normal}\n"
-
+    try:
+        with open(settings_file, "w") as configfile:
+            config.write(configfile)
+            message = f"{green} Changes made successfully{normal}\n"
+    except FileNotFoundError:
+            os.mkdir(working_dir)
+            with open(settings_file, "w") as f:
+                f.write("")
+            set_settings()
 if not os.path.exists(settings_file):
     set_settings()
 else:
@@ -188,7 +193,7 @@ def restore_default():
                    os.path.join(os.environ.get("HOME"), "Pictures", "Redpaper")
                    )
         config.set('settings', 'Wallpaper_selection_method', "sequential")
-        config.set('settings', 'download_limit', "5")
+        config.set('settings', 'download_limit', "1")
         set_settings()
     else:
         error = "ERROR: Choice was not understood"

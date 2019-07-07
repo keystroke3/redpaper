@@ -25,8 +25,7 @@ yellow = "\033[93"
 
 wall_names = {}
 counter = 1
-settings_file = os.path.join(os.environ.get("HOME"), ".redpaper",
-                             "settings.ini")
+settings_file = settings.settings_file
 config = configparser.ConfigParser()
 config.read(settings_file)
 
@@ -35,17 +34,6 @@ post_attr_file = config['settings']['post_attr_file']
 wall_data_file = config['settings']['wall_data_file']
 pictures = config['settings']['download_dir']
 d_limit = int(config['settings']['download_limit'])
-
-
-def dir_check():
-    if not os.path.exists(pictures):
-        os.mkdir(pictures)
-    if not os.path.exists(post_attr_file):
-        with open(post_attr_file, "w") as f:
-            f.write("")
-    if not os.path.exists(wall_data_file):
-        with open(wall_data_file, "w") as wall_data:
-            json.dump(wall_names, wall_data, indent=2)
 
 
 def auth():
@@ -65,19 +53,21 @@ def auth():
     top_paper = wallpaper.hot(limit=d_limit)
 
     with open("post_attr", "w") as attrs:
-        print(f"{green}Getting file attributes")
+        print(f"{green}Getting file attributes{normal}")
         for post in top_paper:
             attrs.write(str(post.title) + "\t" + (str(post.url)))
             attrs.write("\r")
-    os.chdir(pictures)
+    try:
+        os.chdir(pictures)
+    except FileNotFoundError:
+        os.mkdir(pictures)
+        os.chdir(pictures)
 
 
 def wall_dl():
     from gi.repository import Notify
     Notify.init("Redpaper")
     Notify.Notification.new("wallpaper download started").show()
-    dir_check()
-
     global counter
     auth()
     with open(post_attr_file, "r") as links:
@@ -87,13 +77,13 @@ def wall_dl():
             # check if the file aready exists
             file_name = link[0] + ".jpg"
             if os.path.isfile(file_name) is True:
-                print(f"{file_name} already exists...skipping")
+                print(f"{green}{file_name} already exists...skipping{normal}")
                 wall_names[counter] = str(file_name)
                 counter += 1
                 continue
             else:
                 try:
-                    print(f"checking image size")
+                    print(f"{green}checking image size{normal}")
                     image_link = link[1]
                     payload = requests.get(image_link)
                     img = Image.open(BytesIO(payload.content))
@@ -110,10 +100,10 @@ def wall_dl():
                         continue
 
                     try:
-                        print("Downloading image... ")
+                        print(f"{green}Downloading image... {green}")
                         with open(file_name, "wb") as image:
                             image.write(r.content)
-                            print(file_name, "saved")
+                            print(f"{green}{file_name}, saved{normal}")
                         wall_names[counter] = str(file_name)
                         counter += 1
 

@@ -7,7 +7,8 @@ import json
 import pickle
 import configparser
 from subprocess import Popen
-from fetch import pictures, working_dir
+from fetch import pictures, working_dir, wall_dl, wall_data_file
+import settings
 
 normal = "\033[00m"
 red_error = "\033[31;47m"
@@ -15,8 +16,7 @@ green = "\033[92m"
 red = "\033[91m"
 blue = "\033[94m"
 
-settings_file = os.path.join(os.environ.get("HOME"), ".redpaper",
-                             "settings.ini")
+settings_file = settings.settings_file
 config = configparser.ConfigParser()
 config.read(settings_file)
 wall_selection_method = config['settings']['wallpaper_selection_method']
@@ -28,8 +28,11 @@ system = platform.system()
 
 os.chdir(working_dir)
 
-with open("wall_data.json", "r") as data:
-    saved_walls = json.load(data)
+try:
+    with open(wall_data_file, "r") as data:
+        saved_walls = json.load(data)
+except FileNotFoundError:
+        wall_dl()
 
 
 def random_any():
