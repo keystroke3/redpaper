@@ -15,7 +15,13 @@ gi.require_version('Notify', '0.7')
 from gi.repository import Notify
 
 global counter
-# define directoires
+
+normal = "\033[00m"
+red_error = "\033[31;47m"
+green = "\033[92m"
+red = "\033[91m"
+blue = "\033[94m"
+yellow = "\033[93"
 
 wall_names = {}
 counter = 1
@@ -59,7 +65,7 @@ def auth():
     top_paper = wallpaper.hot(limit=d_limit)
 
     with open("post_attr", "w") as attrs:
-        print("Writing attributes")
+        print(f"{green}Getting file attributes")
         for post in top_paper:
             attrs.write(str(post.title) + "\t" + (str(post.url)))
             attrs.write("\r")
@@ -87,14 +93,14 @@ def wall_dl():
                 continue
             else:
                 try:
-                    print("checking image size")
+                    print(f"checking image size")
                     image_link = link[1]
                     payload = requests.get(image_link)
                     img = Image.open(BytesIO(payload.content))
                     width, height = img.size
                     ar = width / height
                 except:
-                    print("Error Getting file ... skipping")
+                    print(f"{red}Error Getting file ... skipping{green}")
                     continue
 
                 if ar > 1.2:
@@ -115,8 +121,9 @@ def wall_dl():
                         continue
 
                 else:
-                    print("File skipped ...")
+                    print(f"{yellow}File skipped ...{green}")
                     continue
+            print(f"{normal}")
 
     os.chdir(working_dir)
     with open("wall_data.json", "w") as wall_data:

@@ -6,17 +6,8 @@ import wall_set
 from settings import set_settings
 from settings import main_settings
 from settings import clear
-
+from settings import banner
 config = configparser.ConfigParser()
-banner = """
-██████╗ ███████╗██████╗ ██████╗  █████╗ ██████╗ ███████╗██████╗
-██╔══██╗██╔════╝██╔══██╗██╔══██╗██╔══██╗██╔══██╗██╔════╝██╔══██╗
-██████╔╝█████╗  ██║  ██║██████╔╝███████║██████╔╝█████╗  ██████╔╝
-██╔══██╗██╔══╝  ██║  ██║██╔═══╝ ██╔══██║██╔═══╝ ██╔══╝  ██╔══██╗
-██║  ██║███████╗██████╔╝██║     ██║  ██║██║     ███████╗██║  ██║
-\n
-<<<<<<<<<<<<<<<<<<<<<<<<<< MAIN MENU >>>>>>>>>>>>>>>>>>>>>>>>>>>
-"""
 
 
 def Red():
@@ -36,17 +27,17 @@ red = "\033[91m"
 blue = "\033[94m"
 
 
-def quit_choice(*args):
+def exit_choice(*args):
     if not len(args) == 0:
         stay = input(f"""\n
         {red} 1 {normal}: {blue} Main menu {normal}\n
         {red} 2 {normal}: {blue} Do it again {normal}\n
-        {red} q {normal}: {blue} Quit {normal}\n
+        {red} x {normal}: {blue} exit {normal}\n
         >>>  """)
     else:
         stay = input(f"""\n
                 {red} 1 {normal}: {blue} Main menu {normal}\n
-                {red} q {normal}: {blue} Quit {normal}\n
+                {red} x {normal}: {blue} exit {normal}\n
         >>>  """)
     if stay == "1":
         main_menu()
@@ -54,38 +45,38 @@ def quit_choice(*args):
         for func in args:
             func()
             Red()
-            quit_choice(func)
-    elif stay == "q" or "Q":
+            exit_choice(func)
+    elif stay == "x" or "X":
         clear()
         return
 
 
 def main_menu():
     global message
-    message = ""
     Red()
-    choice = input(f"""
-            {green}
+    
+    choice = input(f"""{green}
             Welcome to Redpaper. This is a sudo-GUI used to
-            control the underlying Redpaper program.\n{normal}
-            Select an option:\n
+            control the underlying Redpaper program.
+            Select an option:\n{normal}
            {red} 1 {normal}: {blue} Download wallpapers {normal} \n
            {red} 2 {normal}: {blue} Change wallpaper{normal}\n
            {red} 3 {normal}: {blue} Settings{normal}\n
            {red} 4 {normal}: {blue} Help {normal}\n
-           {red} q {normal}: {blue} Quit {normal}\n
+           {red} x {normal}: {blue} exit {normal}\n
             >>>  """)
     if choice == "1":
-        message = f"{green} Downloading wallpapers...{normal}\n"
+        message = ""
         Red()
         fetch.wall_dl()
-        quit_choice(fetch.wall_dl)
+        exit_choice(fetch.wall_dl)
     if choice == "2":
-        message = f"{green} Changing wallpaper...{normal}\n"
+        message = f"{green} Changed wallpaper {normal}\n"
         Red()
         wall_set.set_wallpaper()
-        quit_choice(wall_set.set_wallpaper)
+        exit_choice(wall_set.set_wallpaper)
     elif choice == "3":
+        message = ""
         main_settings()
         main_menu()
     elif choice == "4" or choice == "R":
@@ -94,6 +85,9 @@ def main_menu():
         Red()
         print(f"""
               {green}This section is still under develpment{normal}""")
-        quit_choice()
-    elif choice == "q" or choice == "Q":
+        exit_choice()
+    elif choice == "x" or choice == "X":
         clear()
+    else:
+        message = f"\n{red_error} Choice not understood, try again.{normal}"
+        main_menu()

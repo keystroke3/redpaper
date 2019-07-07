@@ -5,3 +5,5 @@ timetest.py
 wall_data.json
 saved.save
 settings.ini
+requirements.txt
+.gitignore
