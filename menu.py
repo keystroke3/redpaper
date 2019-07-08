@@ -83,7 +83,8 @@ def main_menu():
         message = "HELP\n"
         Red()
         print(f"""
-              {green}This section is still under develpment{normal}""")
+              {green}You can check the wiki for help:
+              https://github.com/keystroke3/redpaper/wiki{normal}""")
         exit_choice()
     elif choice == "x" or choice == "X":
         clear()
