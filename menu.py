@@ -55,7 +55,7 @@ def main_menu():
     Red()
     
     choice = input(f"""{green}
-            Welcome to Redpaper. This is a sudo-GUI used to
+            Welcome to Redpaper. This is a TUI used to
             control the underlying Redpaper program.
             Select an option:\n{normal}
            {red} 1 {normal}: {blue} Download wallpapers {normal} \n
