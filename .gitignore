@@ -7,3 +7,4 @@ saved.save
 settings.ini
 requirements.txt
 .gitignore
+__pycache__
