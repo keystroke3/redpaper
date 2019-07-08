@@ -31,7 +31,7 @@ The other dependencies will be automatically installed.
 ### Procedure
 When the first two dependencies have been met, you can run the following command to do the install:  
 `git clone https://github.com/keystroke3/redpaper.git && cd redpaper && sudo sh install.sh`  
-
+### Usage
 For          information on how to use, please refer to the [Wiki](https://github.com/keystroke3/redpaper/wiki)  
 
 ## Disclaimers and legal notices
