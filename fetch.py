@@ -40,7 +40,9 @@ def auth():
     os.chdir(working_dir)
     global counter
     # Authenticate with Reddit using Auth0
+    
     reddit = praw.Reddit(
+    	  client_id="OTiCnaMKYCGzrA",
         client_secret=None,
         redirect_uri="http://localhost:8080",
         user_agent="UserAgent",

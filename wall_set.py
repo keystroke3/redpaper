@@ -45,7 +45,7 @@ def random_any():
 def random_recent():
     """ Chooses a random file from the recently downloaded files"""
     global path
-
+    saved_walls = json.load(data)
     random_key = str(random.randint(1, len(saved_walls)))
     random_selected = str(saved_walls.get(random_key))
     path = os.path.join(pictures, random_selected)
