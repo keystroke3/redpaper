@@ -53,6 +53,7 @@ def random_recent():
 
 def sequetial():
     global path
+    saved_walls = json.load(data)
     """chooses the wallpaper in the order in which they were downloaded"""
     with open("point.pickle", "rb+") as data:
         # selection_point is used to store the value of the current wallpaper
