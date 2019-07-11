@@ -45,7 +45,6 @@ def random_any():
 def random_recent():
     """ Chooses a random file from the recently downloaded files"""
     global path
-    saved_walls = json.load(data)
     random_key = str(random.randint(1, len(saved_walls)))
     random_selected = str(saved_walls.get(random_key))
     path = os.path.join(pictures, random_selected)
@@ -54,11 +53,12 @@ def random_recent():
 def sequetial():
     global path
     """chooses the wallpaper in the order in which they were downloaded"""
-    saved_walls = json.load(data)
-    with open("point.pickle", "rb+") as data:
+    with open(wall_data_file, "r") as data:
+        saved_walls = json.load(data)
+    with open("point.pickle", "rb+") as wall_point:
         # selection_point is used to store the value of the current wallpaper
         # it is necessary to have so that wallpapers don't repeat themselves
-        selection_point = pickle.load(data)
+        selection_point = pickle.load(wall_point)
         # the value of selection_point will be loaded and incrimened evrytime
         # this finction is run.
         if selection_point == len(saved_walls):
