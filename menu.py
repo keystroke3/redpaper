@@ -46,14 +46,13 @@ def exit_choice(*args):
             func()
             Red()
             exit_choice(func)
-    elif stay == "x" or "X":
+    elif stay == "x" or stay == "X":
         clear()
 
 
 def main_menu():
     global message
     Red()
-    
     choice = input(f"""{green}
             Welcome to Redpaper. This is a TUI used to
             control the underlying Redpaper program.
