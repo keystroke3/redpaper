@@ -110,19 +110,20 @@ def max_dl_choice():
                 max_dl_choice()
 
 
-def change_path():
+def change_path(new_path="", silent=False):
     """
     Changes the path for new wallpaper downloads
     """
-    global message
-    Red()
-    new_path = input(f"""
-                    {green}Enter the complete path to the new location.
-                    This is case sensivite. "Pics" and "pics" are different
-                    e.g. /home/user/Pictures\n
-                    Current path is: {pictures}\n{normal}
-                    {red}x{normal} : {blue}main settings{normal}
-                    >>> """)
+    if not new_path:
+        global message
+        Red()
+        new_path = input(f"""
+                        {green}Enter the complete path to the new location.
+                        This is case sensivite. "Pics" and "pics" are different
+                        e.g. /home/user/Pictures\n
+                        Current path is: {pictures}\n{normal}
+                        {red}x{normal} : {blue}main settings{normal}
+                        >>> """)
     if new_path == "x":
         main_settings()
         return
@@ -134,7 +135,8 @@ def change_path():
         set_settings()
         Red()
         # return
-    change_path()
+    if not silent:
+        change_path()
 
 
 def wall_selection():
