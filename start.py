@@ -5,6 +5,7 @@ import os
 import configparser
 import fetch
 import wall_set
+import settings
 from menu import main_menu
 
 parser = argparse.ArgumentParser(
@@ -24,6 +25,8 @@ parser.add_argument("-R", "--any", action="store_true",
                     help="Sets a random wallpaper form all the downloads")
 parser.add_argument("-r", "--recent", action="store_true",
                     help="Sets a random wallpaper from recent downloads")
+parser.add_argument("-p", "--path", metavar="path",
+                    help="Sets the path where background pictures are downloaded")
 
 args = parser.parse_args()
 
@@ -39,6 +42,8 @@ d_limit = int(config['settings']['download_limit'])
 
 
 def main():
+    if args.path:
+        settings.change_path(args.path, True)
     if args.download:
         if args.limit:
             fetch.d_limit = int(args.limit)
