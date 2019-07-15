@@ -8,3 +8,4 @@ settings.ini
 requirements.txt
 .gitignore
 __pycache__
+.python-version
