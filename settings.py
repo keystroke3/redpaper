@@ -26,7 +26,7 @@ config['settings'] = {
     'wall_data_file': os.path.join(os.environ.get("HOME"), ".redpaper",
                                    "wall_data.json"),
     'Wallpaper_selection_method': "sequential",
-    'download_limit': 5,
+    'download_limit': 1,
 }
 
 
