@@ -32,7 +32,7 @@ os.chdir(working_dir)
 try:
     with open(wall_data_file, "r") as data:
         saved_walls = json.load(data)
-except FileNotFoundError:
+except (FileNotFoundError, ValueError):
         wall_dl()
 
 
@@ -169,6 +169,10 @@ def linux_wallpaper():
 
         elif check_de(de, ["i3", "bspwm"]):
             wall_change(["feh", "--bg-fill", path])
+            with open("wallpaper.sh", "w") as start:
+                start.write(f'feh --bg-fill "{path}"')
+            from subprocess import call
+            call(["chmod", "+x", "wallpaper.sh"])
 
         elif check_de(de, ["sway"]):
             wall_change(["swaymsg", "output * bg %s fill" % path])
@@ -178,10 +182,36 @@ def linux_wallpaper():
                   "You need to set the 'setcommand' paramter at"
                   "~/.config/wallpaper-reddit. "
                   "When you get it working, please file an issue.")
-            sys.exit(1)
+            # sys.exit(1)
 
     except:
         import traceback
         print(traceback.format_exc())
         print(f"{green}You can raise the issue with the devs here: {normal}"
               f"{green}https://github.com/keystroke3/redpaper/issues{normal}")
+
+# def get_desktop_env():
+#     """Identify the current running desktop environment."""
+#     # desktop = os.environ.get("XDG_CURRENT_DESKTOP")
+#     # if desktop:
+#     #     print(desktop)
+
+#     desktop = os.environ.get("DESKTOP_SESSION")
+#     if desktop:
+#         print(desktop)
+
+#     # desktop = os.environ.get("GNOME_DESKTOP_SESSION_ID")
+#     # if desktop:
+#     #     print("GNOME")
+
+#     # desktop = os.environ.get("MATE_DESKTOP_SESSION_ID")
+#     # if desktop:
+#     #     print("MATE")
+#     # desktop = os.environ.get("SWAYSOCK")
+#     # if desktop:
+#     #     print("SWAY")
+#     # desktop = os.environ.get("DESKTOP_STARTUP_ID")
+#     # if desktop and "awesome" in desktop:
+#     #     print("AWESOME")
+
+# get_desktop_env()

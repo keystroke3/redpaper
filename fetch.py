@@ -76,10 +76,16 @@ def wall_dl():
         for link in csvread:
             # check if the file aready exists
             raw_file_name = link[0]
-            if (os.path.isfile(raw_file_name + ".jpg") or
-                os.path.isfile(raw_file_name + ".png")):
+            if (os.path.isfile(raw_file_name + ".jpeg")):
                 print(f"{green}{raw_file_name} already exists{normal}")
-                wall_names[counter] = str(raw_file_name)
+                file_name = raw_file_name+".jpg"
+                wall_names[counter] = str(file_name)
+                counter += 1
+                continue
+            elif (os.path.isfile(raw_file_name + ".png")):
+                print(f"{green}{raw_file_name} already exists{normal}")
+                file_name = raw_file_name+".png"
+                wall_names[counter] = str(file_name)
                 counter += 1
                 continue
             else:
@@ -90,6 +96,7 @@ def wall_dl():
                     img = Image.open(BytesIO(payload.content))
                     width, height = img.size
                     ar = width / height
+                    img.format.lower()
                     new_file_name = raw_file_name+"."+img.format.lower()
                 except:
                     print(f"{red}Error Getting file ... skipping{green}")
@@ -100,7 +107,6 @@ def wall_dl():
                         r = requests.get(link[1])
                     except:
                         continue
-
                     try:
                         print(f"{green}Downloading image... {green}")
                         with open(new_file_name, "wb") as image:
@@ -108,7 +114,6 @@ def wall_dl():
                             print(f"{green}{new_file_name}, saved{normal}")
                         wall_names[counter] = str(new_file_name)
                         counter += 1
-
                     except FileNotFoundError:
                         continue
 
