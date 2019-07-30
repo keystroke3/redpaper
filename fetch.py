@@ -50,7 +50,6 @@ def auth():
     )
     # collect data from reddit
     wallpaper = reddit.subreddit(subreddit)
-    print(wallpaper)
 
     top_paper = wallpaper.hot(limit=d_limit)
 
