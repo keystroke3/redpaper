@@ -78,8 +78,8 @@ def wall_dl():
             raw_file_name = link[0]
             if (os.path.isfile(raw_file_name + ".jpeg")):
                 print(f"{green}{raw_file_name} already exists{normal}")
-                file_name = raw_file_name+".jpg"
-                wall_names[counter] = str(file_name)
+                store_file_name = raw_file_name+".jpeg"
+                wall_names[counter] = store_file_name
                 counter += 1
                 continue
             elif (os.path.isfile(raw_file_name + ".png")):

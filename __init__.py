@@ -2,4 +2,4 @@
 
 
 # Version of Redpaper
-__version__ = "Redpaper v1.0.1"
+__version__ = "Redpaper v1.0.1-beta"

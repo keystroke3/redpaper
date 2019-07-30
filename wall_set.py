@@ -21,7 +21,7 @@ settings_file = settings.settings_file
 config = configparser.ConfigParser()
 config.read(settings_file)
 wall_selection_method = config['settings']['wallpaper_selection_method']
-
+go_back = 0
 
 path = ""
 # pictures = fetch.pictures
@@ -62,15 +62,16 @@ def sequetial():
         selection_point = pickle.load(wall_point)
         # the value of selection_point will be loaded and incrimened evrytime
         # this finction is run.
-        if selection_point == len(saved_walls):
+        if selection_point == len(saved_walls) and go_back == 1:
+            selection_point -= 1
+        elif selection_point == len(saved_walls) and go_back == 0:
             selection_point = 1
-            img_name = str(saved_walls.get(str(selection_point)))
-            path = os.path.join(pictures, str(img_name))
-
-        elif selection_point < len(saved_walls):
-            selection_point += 1
-            img_name = str(saved_walls.get(str(selection_point)))
-            path = os.path.join(pictures, str(img_name))
+        elif selection_point < len(saved_walls) and go_back == 1:
+            selection_point -= 1
+        elif selection_point < len(saved_walls) and go_back == 0:
+            selection_point += 1    
+        img_name = str(saved_walls.get(str(selection_point)))
+        path = os.path.join(pictures, str(img_name))
     # the new value of selection point is stored for the next run
     with open("point.pickle", "wb") as point:
         pickle.dump(selection_point, point)
@@ -102,7 +103,6 @@ def set_wallpaper():
         linux_wallpaper()
     else:
         print(f"{red}Sorry, you system is not supported at the moment{normal}")
-    # print(f"Wallpaper was set to: {path.strip(pictures)}")
 
 
 def check_de(current_de, list_of_de):
