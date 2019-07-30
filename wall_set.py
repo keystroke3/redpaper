@@ -30,7 +30,7 @@ system = platform.system()
 os.chdir(working_dir)
 
 try:
-    with open(wall_data_file, "r") as data:
+    with open(wall_data_file, encoding='utf-8') as data:
         saved_walls = json.load(data)
 except (FileNotFoundError, ValueError):
         wall_dl()
@@ -60,16 +60,32 @@ def sequetial():
         # selection_point is used to store the value of the current wallpaper
         # it is necessary to have so that wallpapers don't repeat themselves
         selection_point = pickle.load(wall_point)
+        print("selection point = ", selection_point)
         # the value of selection_point will be loaded and incrimened evrytime
         # this finction is run.
-        if selection_point == len(saved_walls) and go_back == 1:
+        if selection_point > len(saved_walls):
+            selection_point = 1
+        elif selection_point == len(saved_walls) and go_back == 1:
             selection_point -= 1
         elif selection_point == len(saved_walls) and go_back == 0:
             selection_point = 1
-        elif selection_point < len(saved_walls) and go_back == 1:
+        elif (selection_point < len(saved_walls) and
+              selection_point != 1 and go_back == 1):
             selection_point -= 1
-        elif selection_point < len(saved_walls) and go_back == 0:
-            selection_point += 1    
+        elif (selection_point < len(saved_walls) and go_back == 0):
+            selection_point += 1
+        elif (selection_point < len(saved_walls) and
+              selection_point == 1 and go_back == 0):
+            selection_point += 1
+        elif (selection_point < len(saved_walls) and
+              selection_point == 1 and go_back == 1):
+            selection_point = len(saved_walls)
+        elif (selection_point < len(saved_walls) and
+              selection_point == 0 and go_back == 0):
+            selection_point = 1
+        elif (selection_point < len(saved_walls) and
+              selection_point == 0 and go_back == 1):
+            selection_point = len(saved_walls)
         img_name = str(saved_walls.get(str(selection_point)))
         path = os.path.join(pictures, str(img_name))
     # the new value of selection point is stored for the next run
@@ -190,28 +206,3 @@ def linux_wallpaper():
         print(f"{green}You can raise the issue with the devs here: {normal}"
               f"{green}https://github.com/keystroke3/redpaper/issues{normal}")
 
-# def get_desktop_env():
-#     """Identify the current running desktop environment."""
-#     # desktop = os.environ.get("XDG_CURRENT_DESKTOP")
-#     # if desktop:
-#     #     print(desktop)
-
-#     desktop = os.environ.get("DESKTOP_SESSION")
-#     if desktop:
-#         print(desktop)
-
-#     # desktop = os.environ.get("GNOME_DESKTOP_SESSION_ID")
-#     # if desktop:
-#     #     print("GNOME")
-
-#     # desktop = os.environ.get("MATE_DESKTOP_SESSION_ID")
-#     # if desktop:
-#     #     print("MATE")
-#     # desktop = os.environ.get("SWAYSOCK")
-#     # if desktop:
-#     #     print("SWAY")
-#     # desktop = os.environ.get("DESKTOP_STARTUP_ID")
-#     # if desktop and "awesome" in desktop:
-#     #     print("AWESOME")
-
-# get_desktop_env()

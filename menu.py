@@ -28,24 +28,34 @@ blue = "\033[94m"
 
 
 def exit_choice(*args):
-    if not len(args) == 0:
-        stay = input(f"""\n
-        {red} 1 {normal}: {blue} Main menu {normal}\n
-        {red} 2 {normal}: {blue} Do it again {normal}\n
-        {red} x {normal}: {blue} exit {normal}\n
-        >>>  """)
-    else:
+    if args[0].__name__ == "set_wallpaper":
         stay = input(f"""\n
                 {red} 1 {normal}: {blue} Main menu {normal}\n
+                {red} 2 {normal}: {blue} Previous Wallpaper {normal}\n
+                {red} 3 {normal}: {blue} Next Wallpaper {normal}\n
                 {red} x {normal}: {blue} exit {normal}\n
+                >>>  """)
+    else:
+        stay = input(f"""\n
+        {red} 1 {normal}: {blue} Main menu {normal}\nx
+        {red} x {normal}: {blue} exit {normal}\n
         >>>  """)
     if stay == "1":
         main_menu()
+    # elif stay == "2":
+    #     for func in args:
+    #         func()
+    #         Red()
+    #         exit_choice(func)
     elif stay == "2":
-        for func in args:
-            func()
-            Red()
-            exit_choice(func)
+        wall_set.go_back = 1
+        wall_set.set_wallpaper()
+        Red()
+        exit_choice(args[0])
+    elif stay == "3":
+        wall_set.set_wallpaper()
+        Red()
+        exit_choice(args[0])
     elif stay == "x" or stay == "X":
         clear()
 
