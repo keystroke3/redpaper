@@ -26,7 +26,7 @@ parser.add_argument("-R", "--any", action="store_true",
 parser.add_argument("-r", "--recent", action="store_true",
                     help="Sets a random wallpaper from recent downloads")
 parser.add_argument("-p", "--path", metavar="path",
-                    help="Sets the path where background pictures are downloaded")
+                    help="Sets the path where wallpapers are downloaded")
 
 args = parser.parse_args()
 
@@ -58,7 +58,7 @@ def main():
             wall_set.random_recent()
             wall_set.set_wallpaper()
         else:
-            wall_set.sequetial()
+            # wall_set.sequetial()
             wall_set.set_wallpaper()
     elif args.all:
         if args.limit:

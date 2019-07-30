@@ -88,5 +88,4 @@ def main_menu():
     elif choice == "x" or choice == "X":
         clear()
     else:
-        # message = f"\n{red_error} Choice not understood, try again.{normal}"
         main_menu()
