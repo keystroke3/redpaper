@@ -27,6 +27,7 @@ config['settings'] = {
                                    "wall_data.json"),
     'Wallpaper_selection_method': "sequential",
     'download_limit': 1,
+    'subreddit': "wallpapers",
 }
 
 
@@ -44,6 +45,8 @@ def set_settings():
             with open(settings_file, "w") as f:
                 f.write("")
             set_settings()
+
+
 if not os.path.exists(settings_file):
     set_settings()
 else:
@@ -53,6 +56,7 @@ working_dir = config['settings']['working_dir']
 pictures = config['settings']['download_dir']
 d_limit = int(config['settings']['download_limit'])
 wall_selection_method = config['settings']['wallpaper_selection_method']
+subreddit = config['settings']['subreddit']
 
 global message
 message = ""
@@ -139,6 +143,29 @@ def change_path(new_path="", silent=False):
         change_path()
 
 
+def change_subreddit():
+    """
+    Allows the user to change the subreddit where we fetch the pictures from
+    """
+    global message
+    Red()
+    new_subreddit = input(f"""
+                           {green}Enter the just the name of the subreddit. 
+                           Example wallpapers for reddit.com/r/wallpapers\n
+                           Current path is: {subreddit}\n{normal}
+                           {red}x{normal} : {blue}main settings{normal}
+                           >>> """)
+    if new_subreddit == "x":
+        main_settings()
+        return
+    else:
+        config.set('settings', 'subreddit', str(new_subreddit))
+        set_settings()
+        Red()
+        change_subreddit()
+        return
+
+
 def wall_selection():
     """
     Allows the user to specify the method to be used when choosing wallpapers
@@ -214,6 +241,7 @@ def main_settings():
             {red} 2 {normal}: {blue} Change wallpaper selection method
             {normal}
             {red} 3 {normal}: {blue} Change the download limit{normal}\n
+            {red} 4 {normal}: {blue} Change subreddit to download from{normal}\n
             {red} r {normal}: {blue} Reset to default {normal}\n
             {red} x {normal}: {blue} main menu {normal}\n
             >>>  """)
@@ -223,6 +251,8 @@ def main_settings():
         wall_selection()
     elif choice == "3":
         max_dl_choice()
+    elif choice == "4":
+        change_subreddit()
     elif choice == "r" or choice == "R":
         restore_default()
         main_settings()
