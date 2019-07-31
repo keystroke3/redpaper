@@ -27,7 +27,7 @@ config['settings'] = {
                                    "wall_data.json"),
     'Wallpaper_selection_method': "sequential",
     'download_limit': 1,
-    'subreddit': "wallpapers",
+    'subreddit': "wallpaper+wallpapers",
 }
 
 
