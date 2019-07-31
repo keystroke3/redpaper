@@ -34,6 +34,7 @@ post_attr_file = config['settings']['post_attr_file']
 wall_data_file = config['settings']['wall_data_file']
 pictures = config['settings']['download_dir']
 d_limit = int(config['settings']['download_limit'])
+subreddit = config['settings']['subreddit']
 
 
 def auth():
@@ -48,7 +49,7 @@ def auth():
         commaScopes="all",
     )
     # collect data from reddit
-    wallpaper = reddit.subreddit("wallpaper+wallpapers")
+    wallpaper = reddit.subreddit(subreddit)
 
     top_paper = wallpaper.hot(limit=d_limit)
 
