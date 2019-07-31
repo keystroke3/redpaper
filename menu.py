@@ -42,11 +42,6 @@ def exit_choice(*args):
         >>>  """)
     if stay == "1":
         main_menu()
-    # elif stay == "2":
-    #     for func in args:
-    #         func()
-    #         Red()
-    #         exit_choice(func)
     elif stay == "2":
         wall_set.go_back = 1
         wall_set.set_wallpaper()
@@ -86,7 +81,6 @@ def main_menu():
     elif choice == "3":
         message = ""
         main_settings()
-        main_menu()
     elif choice == "4" or choice == "R":
         # TODO: create a help page
         message = "HELP\n"

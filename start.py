@@ -19,7 +19,7 @@ parser.add_argument("-c", "--change", action="store_true",
                     help="sets a wallpaper without getting new ones")
 parser.add_argument("-a", "--all", action="store_true",
                     help="Download new wallpapers and set one of them")
-parser.add_argument("-l", "--limit",
+parser.add_argument("-l", "--limit", metavar="d_limit",
                     help="Number of wallpapers to look for. Default = 5")
 parser.add_argument("-R", "--any", action="store_true",
                     help="Sets a random wallpaper form all the downloads")
@@ -27,6 +27,8 @@ parser.add_argument("-r", "--recent", action="store_true",
                     help="Sets a random wallpaper from recent downloads")
 parser.add_argument("-p", "--path", metavar="path",
                     help="Sets the path where wallpapers are downloaded")
+parser.add_argument("-s", "--settings", action="store_true",
+                    help="change settings permanently")
 parser.add_argument("-b", "--back", action="store_true",
                     help="Sets the previous image as wallpaper")
 
@@ -44,8 +46,16 @@ d_limit = int(config['settings']['download_limit'])
 
 
 def main():
-    if args.path:
-        settings.change_path(args.path, True)
+    if args.settings:
+        if args.path:
+            settings.change_path(args.path, True)
+            return
+        elif args.limit:
+            settings.max_dl_choice(args.limit, True)
+            return
+        else:
+            print("No option selected or selection not understood")
+            return
     if args.download:
         if args.limit:
             fetch.d_limit = int(args.limit)
