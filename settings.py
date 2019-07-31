@@ -81,32 +81,42 @@ def Red():
     print(message)
 
 
-def max_dl_choice():
+def max_dl_choice(d_limit="", silent=False):
     """
     Allows the user to select a maximum number of wallpaper download attemts
     """
-    Red()
     global message
-    max_dl = input(f"""{green}
-        Enter the maximum number of wallpaper to attemt to download
-        The number cannot exceed 100.
-        Current value is {d_limit}
-        {normal}\n
-        {red}x{normal}: {blue} main menu{normal}
-        >>>
-        """)
+    if not silent:
+        Red()
+        d_limit = input(f"""{green}
+            Enter the maximum number of wallpaper to attemt to download
+            The number cannot exceed 100.
+            Current value is {d_limit}
+            {normal}\n
+            {red}x{normal}: {blue} main menu{normal}
+            {red}q{normal}: {blue} Quit{normal}
+            >>> """)
     try:
-        max_dl = int(max_dl)
+        max_dl = int(d_limit)
         if max_dl > 100:
-            message = (f"{green}Please enter a value less than 100{nromal}\n")
-            Red()
+            message = (f"{green}Please enter a value less than 100{normal}\n")
+            if silent:
+                print(message)
         else:
             config.set('settings', 'download_limit', str(max_dl))
             set_settings()
-            main_settings()
+            if silent:
+                print("Changes made successfully!")
+            return
+            if not silent:
+                main_settings()
     except ValueError:
+            max_dl = str(d_limit)
             if max_dl == "x" or max_dl == "X":
                 main_settings()
+                return
+            elif silent:
+                print("Value error encountered")
             else:
                 error = "You did not enter a number"
                 message = f"{red_error}{error}{normal}\n"
@@ -127,9 +137,13 @@ def change_path(new_path="", silent=False):
                         e.g. /home/user/Pictures\n
                         Current path is: {pictures}\n{normal}
                         {red}x{normal} : {blue}main settings{normal}
+                        {red}q{normal}: {blue} Quit{normal}
                         >>> """)
     if new_path == "x":
         main_settings()
+        return
+    elif new_path == "q" or new_path == "Q":
+        clear()
         return
     elif not os.path.exists(new_path):
         error = "ERROR: The path you entered does not exist."
@@ -137,8 +151,8 @@ def change_path(new_path="", silent=False):
     else:
         config.set('settings', 'download_dir', str(new_path))
         set_settings()
-        Red()
-        # return
+        if silent:
+            print("Path changed successfully")
     if not silent:
         change_path()
 
@@ -154,6 +168,7 @@ def change_subreddit():
                            Example wallpapers for reddit.com/r/wallpapers\n
                            Current path is: {subreddit}\n{normal}
                            {red}x{normal} : {blue}main settings{normal}
+                           {red} q {normal}: {blue} Quit {normal}
                            >>> """)
     if new_subreddit == "x":
         main_settings()
@@ -181,6 +196,7 @@ def wall_selection():
             {red} 3 {normal}: {blue} from latest downloads in download order
             {normal}
             {red} x {normal}: {blue} main settings {normal}\n
+            {red} q {normal}: {blue} Quit {normal}\n
             >>>
             """)
     if selection_mode == "1":
@@ -195,8 +211,11 @@ def wall_selection():
         config.set('settings', 'Wallpaper_selection_method',
                    "sequential")
         set_settings()
-    elif selection_mode == "x":
+    elif selection_mode == "x" or selection_mode == "X":
         main_settings()
+        return
+    elif selection_mode == "q" or selection_mode == "Q":
+        clear()
         return
     else:
         error = "ERROR: The path you entered does not exist."
@@ -241,10 +260,20 @@ def main_settings():
             {red} 2 {normal}: {blue} Change wallpaper selection method
             {normal}
             {red} 3 {normal}: {blue} Change the download limit{normal}\n
-            {red} 4 {normal}: {blue} Change subreddit to download from{normal}\n
             {red} r {normal}: {blue} Reset to default {normal}\n
-            {red} x {normal}: {blue} main menu {normal}\n
+            {red} q {normal}: {blue} Quit {normal}\n
             >>>  """)
+    if choice == "1":
+        change_path()
+    if choice == "2":
+        wall_selection()
+    elif choice == "3":
+        max_dl_choice()
+    elif choice == "r" or choice == "R":
+        restore_default()
+        main_settings()
+    elif choice == "q" or choice == "Q":
+        clear()
     if choice == "1":
         change_path()
     if choice == "2":
