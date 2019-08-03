@@ -29,16 +29,19 @@ system = platform.system()
 
 os.chdir(working_dir)
 
-try:
-    with open(wall_data_file, encoding='utf-8') as data:
-        saved_walls = json.load(data)
-except (FileNotFoundError, ValueError):
-        wall_dl()
+
+def load_data():
+    try:
+        with open(wall_data_file, encoding='utf-8') as data:
+            saved_walls = json.load(data)
+    except (FileNotFoundError, ValueError):
+            wall_dl()
 
 
 def random_any():
     """Selects a random file from all the previous downloads"""
     global path
+    load_data()
     selected = random.choice(os.listdir(pictures))
     path = os.path.join(pictures, selected)
 
@@ -46,6 +49,7 @@ def random_any():
 def random_recent():
     """ Chooses a random file from the recently downloaded files"""
     global path
+    load_data()
     random_key = str(random.randint(1, len(saved_walls)))
     random_selected = str(saved_walls.get(random_key))
     path = os.path.join(pictures, random_selected)
@@ -53,6 +57,7 @@ def random_recent():
 
 def sequetial():
     global path
+    load_data()
     """chooses the wallpaper in the order in which they were downloaded"""
     with open(wall_data_file, "r") as data:
         saved_walls = json.load(data)
@@ -205,4 +210,3 @@ def linux_wallpaper():
         print(traceback.format_exc())
         print(f"{green}You can raise the issue with the devs here: {normal}"
               f"{green}https://github.com/keystroke3/redpaper/issues{normal}")
-

@@ -164,7 +164,7 @@ def change_subreddit():
     global message
     Red()
     new_subreddit = input(f"""
-                           {green}Enter the just the name of the subreddit. 
+                           {green}Enter the just the name of the subreddit.
                            Example wallpapers for reddit.com/r/wallpapers\n
                            Current path is: {subreddit}\n{normal}
                            {red}x{normal} : {blue}main settings{normal}
