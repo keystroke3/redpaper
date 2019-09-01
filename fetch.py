@@ -76,55 +76,53 @@ def wall_dl():
     auth()
     with open(post_attr_file, "r") as links:
         csvread = csv.reader(links, delimiter="\t")
-
         for link in csvread:
-            # check if the file aready exists
-            raw_file_name = link[0]
-            if (os.path.isfile(raw_file_name + ".jpeg")):
-                print(f"{green}{raw_file_name} already exists{normal}")
-                store_file_name = raw_file_name+".jpeg"
-                wall_names[counter] = store_file_name
-                counter += 1
-                continue
-            elif (os.path.isfile(raw_file_name + ".png")):
-                print(f"{green}{raw_file_name} already exists{normal}")
-                file_name = raw_file_name+".png"
-                wall_names[counter] = str(file_name)
-                counter += 1
-                continue
-            else:
-                try:
-                    print(f"{green}checking image properties{normal}")
-                    image_link = link[1]
-                    payload = requests.get(image_link)
-                    img = Image.open(BytesIO(payload.content))
-                    width, height = img.size
-                    ar = width / height
-                    img.format.lower()
-                    new_file_name = raw_file_name+"."+img.format.lower()
-                except:
-                    print(f"{red}Error Getting file ... skipping{green}")
+                raw_file_name = link[0]
+                if (os.path.isfile(raw_file_name + ".jpeg")):
+                    print(f"{green}{raw_file_name} already exists{normal}")
+                    store_file_name = raw_file_name+".jpeg"
+                    wall_names[counter] = store_file_name
+                    counter += 1
                     continue
-
-                if ar > 1.2:
-                    try:
-                        r = requests.get(link[1])
-                    except:
-                        continue
-                    try:
-                        print(f"{green}Downloading image... {green}")
-                        with open(new_file_name, "wb") as image:
-                            image.write(r.content)
-                            print(f"{green}{new_file_name}, saved{normal}")
-                        wall_names[counter] = str(new_file_name)
-                        counter += 1
-                    except FileNotFoundError:
-                        continue
-
+                elif (os.path.isfile(raw_file_name + ".png")):
+                    print(f"{green}{raw_file_name} already exists{normal}")
+                    file_name = raw_file_name+".png"
+                    wall_names[counter] = str(file_name)
+                    counter += 1
+                    continue
                 else:
-                    print(f"{yellow}File skipped ...{green}")
-                    continue
-            print(f"{normal}")
+                    try:
+                        print(f"{green}checking image properties{normal}")
+                        image_link = link[1]
+                        payload = requests.get(image_link)
+                        img = Image.open(BytesIO(payload.content))
+                        width, height = img.size
+                        ar = width / height
+                        img.format.lower()
+                        new_file_name = raw_file_name+"."+img.format.lower()
+                    except:
+                        print(f"{red}Error Getting file ... skipping{green}")
+                        continue
+
+                    if ar > 1.2:
+                        try:
+                            r = requests.get(link[1])
+                        except:
+                            continue
+                        try:
+                            print(f"{green}Downloading image... {green}")
+                            with open(new_file_name, "wb") as image:
+                                image.write(r.content)
+                                print(f"{green}{new_file_name}, saved{normal}")
+                            wall_names[counter] = str(new_file_name)
+                            counter += 1
+                        except FileNotFoundError:
+                            continue
+
+                    else:
+                        print(f"{yellow}File skipped ...{green}")
+                        continue
+                print(f"{normal}")
 
     os.chdir(working_dir)
     with open("wall_data.json", "w") as wall_data:

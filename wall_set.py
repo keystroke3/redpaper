@@ -34,6 +34,7 @@ def load_data():
     try:
         with open(wall_data_file, encoding='utf-8') as data:
             saved_walls = json.load(data)
+            return saved_walls
     except (FileNotFoundError, ValueError):
             wall_dl()
 
@@ -45,14 +46,21 @@ def random_any():
     selected = random.choice(os.listdir(pictures))
     path = os.path.join(pictures, selected)
 
+# FIXME: Random Recent selection is not working properly
 
-def random_recent():
-    """ Chooses a random file from the recently downloaded files"""
+# def random_recent():
+#     """ Chooses a random file from the recently downloaded files"""
+#     global path
+#     load_data()
+#     random_key = str(random.randint(1, len(load_data)))
+#     random_selected = str(load_data.get(random_key))
+#     path = os.path.join(pictures, random_selected)
+
+
+def custom_wall():
+    """Changes the wallpaper to the image specified by the user"""
     global path
-    load_data()
-    random_key = str(random.randint(1, len(saved_walls)))
-    random_selected = str(saved_walls.get(random_key))
-    path = os.path.join(pictures, random_selected)
+    linux_wallpaper()
 
 
 def sequetial():
@@ -119,8 +127,8 @@ def set_wallpaper():
             sequetial()
         elif wall_selection_method == "random_any":
             random_any()
-        elif wall_selection_method == "random_recent":
-            random_recent()
+        # elif wall_selection_method == "random_recent":
+        #     random_recent()
         linux_wallpaper()
     else:
         print(f"{red}Sorry, you system is not supported at the moment{normal}")

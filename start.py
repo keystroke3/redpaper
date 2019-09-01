@@ -11,22 +11,26 @@ from menu import main_menu
 parser = argparse.ArgumentParser(
     description="""This is a simple program that allows you to change
     you desktop wallpaper. It fetches the best wallpapers from Reddit
-    and sets a random one as the wallpaper.""")
+    and sets one as the wallpaper.""")
 
 parser.add_argument("-d", "--download", action="store_true",
-                    help="Downloads new wallpapers sets one of them")
+                    help="Downloads new wallpapers")
 parser.add_argument("-c", "--change", action="store_true",
-                    help="sets a wallpaper without getting new ones")
+                    help="sets a wallpaper without downloading new ones")
 parser.add_argument("-a", "--all", action="store_true",
                     help="Download new wallpapers and set one of them")
-parser.add_argument("-l", "--limit", metavar="d_limit",
-                    help="Number of wallpapers to look for. Default = 5")
+parser.add_argument("-l", "--limit", metavar="NUMBER",
+                    help="Number of wallpapers to look for. Default = 1")
 parser.add_argument("-R", "--any", action="store_true",
                     help="Sets a random wallpaper form all the downloads")
 parser.add_argument("-r", "--recent", action="store_true",
                     help="Sets a random wallpaper from recent downloads")
-parser.add_argument("-p", "--path", metavar="path",
-                    help="Sets the path where wallpapers are downloaded")
+parser.add_argument("-p", "--path", metavar="PATH",
+                    help="Sets the path where wallpapers are downloaded.\n"
+                    "The path has to be in quotes")
+parser.add_argument("-i", "--image", metavar="IMAGE_PATH",
+                    help="Sets a user specified image as wallpaper.\n"
+                    "Path has to be in quotes")
 parser.add_argument("-s", "--settings", action="store_true",
                     help="change settings permanently")
 parser.add_argument("-b", "--back", action="store_true",
@@ -66,15 +70,18 @@ def main():
         if args.any:
             wall_set.random_any()
             wall_set.set_wallpaper()
-        elif args.recent:
-            wall_set.random_recent()
-            wall_set.set_wallpaper()
+        # elif args.recent:
+            # wall_set.random_recent()
+        #     wall_set.set_wallpaper()
         else:
             if args.back:
                 wall_set.go_back = 1
                 wall_set.set_wallpaper()
             else:
                 wall_set.set_wallpaper()
+    elif args.image:
+        wall_set.path = args.image
+        wall_set.custom_wall()
     elif args.all:
         if args.limit:
             fetch.d_limit = int(args.limit)
