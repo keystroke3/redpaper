@@ -55,17 +55,19 @@ def auth():
     wallpaper = reddit.subreddit(subreddits)
 
     top_paper = wallpaper.hot(limit=d_limit)
-
-    with open("post_attr", "w") as attrs:
-        print(f"{green}Getting file attributes{normal}")
-        for post in top_paper:
-            attrs.write(str(post.title) + "\t" + (str(post.url)))
-            attrs.write("\r")
     try:
-        os.chdir(pictures)
-    except FileNotFoundError:
-        os.mkdir(pictures)
-        os.chdir(pictures)
+        with open("post_attr", "w") as attrs:
+            print(f"{green}Getting file attributes{normal}")
+            for post in top_paper:
+                attrs.write(str(post.title) + "\t" + (str(post.url)))
+                attrs.write("\r")
+        try:
+            os.chdir(pictures)
+        except FileNotFoundError:
+            os.mkdir(pictures)
+            os.chdir(pictures)
+    except KeyboardInterrupt:
+        print("Keyboard interupt. Closing... ")
 
 
 def wall_dl():
@@ -77,6 +79,7 @@ def wall_dl():
     with open(post_attr_file, "r") as links:
         csvread = csv.reader(links, delimiter="\t")
         for link in csvread:
+            try:
                 raw_file_name = link[0]
                 if (os.path.isfile(raw_file_name + ".jpeg")):
                     print(f"{green}{raw_file_name} already exists{normal}")
@@ -100,6 +103,9 @@ def wall_dl():
                         ar = width / height
                         img.format.lower()
                         new_file_name = raw_file_name+"."+img.format.lower()
+                    except KeyboardInterrupt:
+                        print("Keyboard interupt. Exiting...")
+                        break
                     except:
                         print(f"{red}Error Getting file ... skipping{green}")
                         continue
@@ -123,6 +129,8 @@ def wall_dl():
                         print(f"{yellow}File skipped ...{green}")
                         continue
                 print(f"{normal}")
+            except KeyboardInterrupt:
+                print("Keyboard interupt. Closing... ")
 
     os.chdir(working_dir)
     with open("wall_data.json", "w") as wall_data:

@@ -1,7 +1,6 @@
 #!/bin/bash
 
 [ -d "/opt/redpaper" ] && rm -r /opt/redpaper
-cd redpaper
 sudo mkdir /opt/redpaper
 sudo cp fetch.py wall_set.py settings.py menu.py start.py /opt/redpaper
 sudo ln -sf /opt/redpaper/start.py /usr/bin/redpaper
