@@ -36,7 +36,7 @@ def load_data():
             saved_walls = json.load(data)
             return saved_walls
     except (FileNotFoundError, ValueError):
-            wall_dl()
+        wall_dl()
 
 
 def random_any():
@@ -196,21 +196,21 @@ def linux_wallpaper():
         elif check_de(de, ["lubuntu", "Lubuntu"]):
             wall_change(["pcmanfm", "-w", "%s" % path])
 
-        elif check_de(de, ["i3", "bspwm"]):
-            wall_change(["feh", "--bg-fill", path])
-            with open("wallpaper.sh", "w") as start:
-                start.write(f'feh --bg-fill "{path}"')
-            from subprocess import call
-            call(["chmod", "+x", "wallpaper.sh"])
-
         elif check_de(de, ["sway"]):
             wall_change(["swaymsg", "output * bg %s fill" % path])
 
         else:
-            print("Your DE could not be detected to set the wallpaper. "
-                  "You need to set the 'setcommand' paramter at"
-                  "~/.config/wallpaper-reddit. "
-                  "When you get it working, please file an issue.")
+            try:
+                wall_change(["feh", "--bg-fill", path])
+                with open("wallpaper.sh", "w") as start:
+                    start.write(f'feh --bg-fill "{path}"')
+                from subprocess import call
+                call(["chmod", "+x", "wallpaper.sh"])
+            except:
+                print("Your DE could not be detected to set the wallpaper. "
+                      "If you are using a tiling WM, make sure 'feh' is installed"
+                      "If all is well, feel free to raise an issue on Github")
+
             # sys.exit(1)
 
     except:
