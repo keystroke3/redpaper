@@ -49,5 +49,5 @@ any system issues the user may encounter as a result of using this software
 This software uses publicly available resources and does not claim ownership of the images  
 it downloads.  
 The creators of this software have no control over the content of the images.  
-If the user encounters an  image that is deemed inappropriate offensive or illegal,  
+If the user encounters an image that is deemed inappropriate, offensive or illegal,  
 a concern should be raised with the image hosts and not the software creators.
