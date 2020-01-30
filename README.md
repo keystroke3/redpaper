@@ -40,14 +40,59 @@ autostart files e.g. ~/.config/bspwm/bspwmrc if you are using bspwm:
 This line makes sure that the wallpaper you set will persist after logging in. 
 ## Usage
 To use, simply run `redpaper` in the terminal.
-For more information on how to use, please refer to the [Wiki](https://github.com/keystroke3/redpaper/wiki)  
+Once the installation is complete, you can use Redpaper in two ways, with command mode and with  
+and with interactive shell.
 
-## Disclaimers and legal notices
-This program was created with the mind to help community.  
-It comes as is without any warranty. The creators of this app do not claim responsibility for  
-any system issues the user may encounter as a result of using this software  
-This software uses publicly available resources and does not claim ownership of the images  
-it downloads.  
-The creators of this software have no control over the content of the images.  
-If the user encounters an image that is deemed inappropriate, offensive or illegal,  
-a concern should be raised with the image hosts and not the software creators.
+### Command Line Mode (CLI)
+You can run the redpaper command with arguments to perform tasks The list of arguments can be
+listed by  
+running `redpaper -h` or `redpaper --help` The arguments are:  
+```  -h, --help            show this help message and exit
+  -d, --download        Downloads new wallpapers
+  -c, --change          sets a wallpaper without downloading new ones
+  -a, --all             Download new wallpapers and set one of them
+  -l NUMBER, --limit NUMBER
+                        Number of wallpapers to look for. Default = 1
+  -R, --any             Sets a random wallpaper form all the downloads
+  -r, --recent          Sets a random wallpaper from recent downloads
+  -p PATH, --path PATH  Sets the path where wallpapers are downloaded. The
+                        path has to be in quotes
+  -i IMAGE_PATH, --image IMAGE_PATH
+                        Sets a user specified image as wallpaper. Path has to
+                        be in quotes
+  -s, --settings        change settings permanently
+  -b, --back            Sets the previous image as wallpaper
+```
+### Interactive mode (TUI)
+You can also run redpaper in interactive mode, that does not involve typing commands.  
+To actaivate this mode, simply run redpaper without any arguments to bring it up.  
+The main menu will come up as shown below:  
+
+#### Main Menu
+
+You can then select the action you wish to perform and the options will change depending  
+on your choices. For example, selecting 1 as the option will begin downloading the wallpapers:  
+This is the basic usage of the program. You can look at the settings to edit the behavior  
+of the program.
+
+#### settings
+Keep in mind that these settings will be ignored when the alternative value is passed as an argument in command mode.  
+The behavior of the program can be slightly modified by the user. Currently, there are only  
+ a few changes that can be made. The settings are:
+
+* Change the wallpaper download location:
+  By default, downloaded wallpapers are stored in the `$HOME/Pictures/Redpaper`  
+  If you wish to change, you can use the interactive mode to edit it.  
+  The path must be of the form `/path/to/dir`. It must be absolute. I.e, not `~/path/to/dir`  
+  If the path is not part of $HOME, then you may need to start the settings editor with root  
+  privileges for the directory to be writable.  
+
+* ~~Wallpaper selection method~~:
+  This option has been removed.
+
+* Download limit.
+  The Reddit API can take many requests, but I chose to limit the maximum to 100 because  
+  I thought this is a sufficient enough number. The user can set their own limit so long  
+  as it is between 1 and 100.   
+
+[Leagal stuff](https://github.com/keystroke3/redpaper/blob/master/LEAGAL.md)
