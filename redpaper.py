@@ -14,10 +14,9 @@ import pickle
 import gi
 import traceback
 from subprocess import call
-from subprocess import Popen
-from pathlib import Path
 from PIL import Image
 from io import BytesIO
+from os.path import join
 gi.require_version('Notify', '0.7')
 
 normal = "\033[00m"
@@ -33,31 +32,28 @@ global counter
 
 wall_names = {}
 counter = 1
-settings_file = os.path.join(os.environ.get("HOME"), ".redpaper",
-                             "settings.ini")
+HOME = os.environ.get("HOME")
+working_dir = join(HOME, ".redpaper")
+settings_file = join(working_dir, "settings.ini")
+wall_data_file = join(working_dir, "wall_data.json")
+post_attr_file = join(working_dir, "post_attr")
 config = configparser.ConfigParser()
+system = platform.system()
+
 if not os.path.exists(settings_file):
     config['settings'] = {
-    'download_dir':
-    os.path.join(os.environ.get("HOME"), "Pictures", "Redpaper"),
-    'working_dir': os.path.join(os.environ.get("HOME"), ".redpaper"),
-    'post_attr_file': os.path.join(os.environ.get("HOME"), ".redpaper",
-                                   "post_attr"),
-    'wall_data_file': os.path.join(os.environ.get("HOME"), ".redpaper",
-                                   "wall_data.json"),
-    'download_limit': 1}
+        'download_dir': join(HOME, "Pictures", "Redpaper"),
+        'download_limit': 5}
+    if not os.path.exists(working_dir):
+        os.mkdir(working_dir)
     with open(settings_file, "w") as f:
         config.write(f)
-    
+    config.read(settings_file)
 else:
     config.read(settings_file)
 
-working_dir = config['settings']['working_dir']
-post_attr_file = config['settings']['post_attr_file']
-wall_data_file = config['settings']['wall_data_file']
 pictures = config['settings']['download_dir']
 d_limit = int(config['settings']['download_limit'])
-working_dir = os.path.join(os.environ.get("HOME"), ".redpaper")
 
 
 # if not os.path.exists(settings_file):
@@ -349,9 +345,8 @@ class Settings():
             return
         elif choice == "1":
             config.set('settings', 'download_dir',
-                    os.path.join(os.environ.get("HOME"), "Pictures", "Redpaper")
-                    )
-            config.set('settings', 'download_limit', "1")
+                       join(HOME, "Pictures", "Redpaper"))
+            config.set('settings', 'download_limit', "5")
             self.save_settings()
         else:
             error = "ERROR: Choice was not understood"
@@ -359,10 +354,9 @@ class Settings():
             self.restore_default()
             return
 
-system = platform.system()
-os.chdir(working_dir)
 
 class WallSet:
+    os.chdir(working_dir)
 
     def check_de(self, current_de, list_of_de):
         """Check if any of the strings in ``list_of_de``
@@ -380,9 +374,8 @@ class WallSet:
             saved_walls = json.load(data)
 
         with open("point.pickle", "rb+") as wall_point:
-            # selection_point is used to store the value of the current wallpaper
-            # it is necessary to have so that wallpapers don't repeat themselves
-            
+            # selection_point stores the value of the current wallpaper
+            # it is necessary so that wallpapers don't repeat 
             selection_point = pickle.load(wall_point)
 
             if selection_point > len(saved_walls):
@@ -392,51 +385,35 @@ class WallSet:
             elif selection_point == len(saved_walls) and go_back == 0:
                 selection_point = 1
             elif (selection_point < len(saved_walls) and
-                selection_point != 1 and go_back == 1):
+                  selection_point != 1 and go_back == 1):
                 selection_point -= 1
             elif (selection_point < len(saved_walls) and
-                go_back == 0):
+                  go_back == 0):
                 selection_point += 1
             elif (selection_point < len(saved_walls) and
-                selection_point == 1 and go_back == 0):
+                  selection_point == 1 and go_back == 0):
                 selection_point += 1
             elif (selection_point < len(saved_walls) and
-                selection_point == 1 and go_back == 1):
+                  selection_point == 1 and go_back == 1):
                 selection_point = len(saved_walls)
             elif (selection_point < len(saved_walls) and
-                selection_point == 0 and go_back == 0):
+                  selection_point == 0 and go_back == 0):
                 selection_point = 1
             elif (selection_point < len(saved_walls) and
-                selection_point == 0 and go_back == 1):
+                  selection_point == 0 and go_back == 1):
                 selection_point = len(saved_walls)
             img_name = str(saved_walls.get(str(selection_point)))
         # the new value of selection point is stored for the next run
         print(f"selection point is {selection_point}")
         with open("point.pickle", "wb") as point:
             pickle.dump(selection_point, point)
-        return os.path.join(pictures, str(img_name))
-
-    #FIXME: this bit of code is slated for removal.
-    # def wall_change(self, *popenargs, timeout=None, **kwargs):
-    #     """Run command with arguments.  Wait for command to complete or
-    #     timeout, then return the returncode attribute.
-    #     The arguments are the same as for the Popen constructor.  Example:
-    #     retcode = call(["ls", "-l"])
-    #     """
-    #     with Popen(*popenargs, **kwargs) as p:
-    #         try:
-    #             return p.wait(timeout=timeout)
-    #         except:  # Including KeyboardInterrupt, wait handled that.
-    #             p.kill()
-    #             # We don't call p.wait() again as p.__exit__ does that for us.
-    #             raise
-
+        return join(pictures, str(img_name))
 
     def set_wallpaper(self, img_path):
         if system == "Linux":
             self.linux_wallpaper(img_path)
         else:
-            print(f"{red}Sorry, you system is not supported at the moment{normal}")
+            print(f"{red}Sorry, your system is not supported yet.{normal}")
 
     def linux_wallpaper(self, img_path):
         check_de = self.check_de
@@ -473,8 +450,8 @@ class WallSet:
                 #  from null to the original filename
                 # xfconf props aren't 100% consistent so light workaround
                 #  for that too
-                props = check_output(['xfconf-query', '-c', 'xfce4-desktop', '-p',
-                                    '/backdrop', '-l'])\
+                props = check_de(['xfconf-query', '-c', 'xfce4-desktop', '-p',
+                                  '/backdrop', '-l'])\
                     .decode("utf-8").split('\n')
                 for prop in props:
                     if "last-image" in prop or "image-path" in prop:
@@ -518,6 +495,7 @@ class WallSet:
                     https://github.com/keystroke3/redpaper/issues.
                     Make sure you include this error message:\n\n""")
             print(traceback.format_exc())
+
 
 class Home():
     def main_menu(self):
@@ -579,7 +557,7 @@ def main():
     parser.add_argument("-l", "--limit", metavar="NUMBER",
                         help="Number of wallpapers to look for. Default = 1")
     parser.add_argument("-p", "--path", metavar="PATH",
-                        help="Sets the img_path where wallpapers are downloaded.\n"
+                        help="Sets the download location for new wallpapers\n"
                         "The img_path has to be in quotes")
     parser.add_argument("-i", "--image", metavar="IMAGE_PATH",
                         help="Sets a user specified image as wallpaper.\n"
@@ -627,4 +605,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
