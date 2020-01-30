@@ -8,7 +8,7 @@ a new look, you this tool is for you.  When you want to change the wallpaper, yo
 run Redpaper's download tool and it will scout Reddit for the best wallpaper of the  
 day and download them. You can then change the wallpaper using it.
 
-![Main Menu](https://raw.githubusercontent.com/keystroke3/redpaper/master/screenshots/main-menu.png)
+![Main Menu](https://raw.githubusercontent.com/keystroke3/redpaper/master/screenshots/neo-redpaper.png)
 
 ## Installation
 Redpaper only works on Linux systems at the moment, therefor only people running Linux  
