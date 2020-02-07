@@ -186,7 +186,7 @@ class Fetch():
                             except KeyboardInterrupt:
                                 print("Keyboard interupt. Exiting...")
                                 break
-                            except:
+                            except Exception:
                                 print(
                                     f"\t{red}Error Getting file ... skipping{green}")
                                 continue
@@ -194,7 +194,7 @@ class Fetch():
                             if ar > 1.2:
                                 try:
                                     r = requests.get(link[1])
-                                except:
+                                except Exception:
                                     continue
                                 try:
                                     print(
@@ -214,8 +214,6 @@ class Fetch():
                         print(f"{normal}")
                     except KeyboardInterrupt:
                         print("Keyboard interupt. Closing... ")
-
-        os.chdir(working_dir)
         with open("wall_data.json", "w") as wall_data:
             json.dump(wall_names, wall_data, indent=2)
         selection_point = 0
@@ -224,6 +222,28 @@ class Fetch():
 
         Notify.init("Redpaper")
         Notify.Notification.new("Finished downloading wallpapers").show()
+
+    def custom_folder(self, folder_path):
+        if not os.path.exists(folder_path):
+            error = "ERROR: The img_path you entered does not exist."
+            message = f"{red_error}{error}{normal}\n"
+            print(message)
+        from os import walk
+        from os.path import join
+        for r, d, f in walk(folder_path):
+            img_list = [i for i in f if ".jpg" or ".png" in i for i in f]
+            img_paths = [join(r, img) for img in img_list]
+            img_dict = {}
+            for ind, img in enumerate(img_paths):
+                img_dict[ind] = img
+        with open("wall_data.json", "w") as wall_data:
+            json.dump(img_dict, wall_data)
+        selection_point = 0
+        with open("point.pickle", "wb") as point:
+            pickle.dump(selection_point, point)
+        message = "Source folder changed"
+        print(message)
+
 
 
 class Settings():
@@ -482,7 +502,7 @@ class WallSet:
                     with open("wallpaper.sh", "w") as start:
                         start.write(f'feh --bg-fill "{img_path}"')
                     call(["chmod", "+x", "wallpaper.sh"])
-                except:
+                except Exception:
                     print("""\nRedpaper has run into a problem. Please raise an issue on
                     https://github.com/keystroke3/redpaper/issues.
                     Make sure you include this error message:\n\n""")
@@ -490,7 +510,7 @@ class WallSet:
 
                 # sys.exit(1)
 
-        except:
+        except Exception:
             print("""\nRedpaper has run into a problem. Please raise an issue on
                     https://github.com/keystroke3/redpaper/issues.
                     Make sure you include this error message:\n\n""")
@@ -562,6 +582,9 @@ def main():
     parser.add_argument("-i", "--image", metavar="IMAGE_PATH",
                         help="Sets a user specified image as wallpaper.\n"
                         "Path has to be in quotes")
+    parser.add_argument("-f", "--folder", metavar="FOLDER_PATH",
+                        help="Uses images stored in the specified folder\n"
+                        "Path has to be in quotes")
     parser.add_argument("-s", "--settings", action="store_true",
                         help="change settings permanently")
     parser.add_argument("-b", "--back", action="store_true",
@@ -593,6 +616,8 @@ def main():
             WallSet().set_wallpaper(img_path)
     elif args.image:
         WallSet().linux_wallpaper(args.image)
+    elif args.folder:
+        Fetch().custom_folder(args.folder)
     elif args.all:
         img_path = WallSet().sequetial(0)
         if args.limit:
