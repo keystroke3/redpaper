@@ -214,7 +214,8 @@ class Fetch():
                         print(f"{normal}")
                     except KeyboardInterrupt:
                         print("Keyboard interupt. Closing... ")
-        with open("wall_data.json", "w") as wall_data:
+        os.chdir(working_dir)
+        with open(wall_data_file, "w") as wall_data:
             json.dump(wall_names, wall_data, indent=2)
         selection_point = 0
         with open("point.pickle", "wb") as point:
@@ -224,26 +225,33 @@ class Fetch():
         Notify.Notification.new("Finished downloading wallpapers").show()
 
     def custom_folder(self, folder_path):
-        if not os.path.exists(folder_path):
-            error = "ERROR: The img_path you entered does not exist."
-            message = f"{red_error}{error}{normal}\n"
-            print(message)
-        from os import walk
-        from os.path import join
-        for r, d, f in walk(folder_path):
-            img_list = [i for i in f if ".jpg" or ".png" in i for i in f]
-            img_paths = [join(r, img) for img in img_list]
-            img_dict = {}
-            for ind, img in enumerate(img_paths):
-                img_dict[ind] = img
-        with open("wall_data.json", "w") as wall_data:
-            json.dump(img_dict, wall_data)
-        selection_point = 0
-        with open("point.pickle", "wb") as point:
-            pickle.dump(selection_point, point)
-        message = "Source folder changed"
-        print(message)
-
+        os.chdir(working_dir)
+        try:
+            from os import walk
+            from os.path import join
+            for r, d, f in walk(folder_path):
+                img_list = [i for i in f if ".jpg" or ".png" in i for i in f]
+                img_paths = [join(r, img) for img in img_list]
+                img_dict = {}
+                for ind, img in enumerate(img_paths):
+                    img_dict[ind] = img
+                with open(wall_data_file, "w") as wall_data:
+                    json.dump(img_dict, wall_data)
+                selection_point = 0
+                with open("point.pickle", "wb") as point:
+                    pickle.dump(selection_point, point)
+                message = "Source folder changed"
+                print(message)
+        except FileNotFoundError:
+            if folder_path[0] == "~":
+                folder_path = folder_path.replace("~", HOME)
+                print(folder_path)
+                try:
+                    Fetch().custom_folder(folder_path)
+                except FileNotFoundError:
+                    error = "ERROR: The img_path you entered does not exist."
+                    message = f"{red_error}{error}{normal}\n"
+                    print(message)
 
 
 class Settings():
@@ -287,7 +295,7 @@ class Settings():
 
     def max_dl_choice(self, d_limit="", silent=False):
         """
-        Allows the user to select a maximum number of wallpaper download attemts
+        Allows the user to select a max number of wallpaper download attemts
         """
 
         if not silent:
@@ -350,7 +358,6 @@ class Settings():
             message = "Path changed successfully"
             self.change_path()
 
-
     def restore_default(self):
         refresh()
         choice = input(f"""{green}
@@ -395,7 +402,7 @@ class WallSet:
 
         with open("point.pickle", "rb+") as wall_point:
             # selection_point stores the value of the current wallpaper
-            # it is necessary so that wallpapers don't repeat 
+            # it is necessary so that wallpapers don't repeat
             selection_point = pickle.load(wall_point)
 
             if selection_point > len(saved_walls):
