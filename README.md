@@ -47,19 +47,19 @@ and with interactive shell.
 You can run the redpaper command with arguments to perform tasks The list of arguments can be
 listed by  
 running `redpaper -h` or `redpaper --help` The arguments are:  
-```  -h, --help            show this help message and exit
+``` 
+  -h, --help            show this help message and exit
   -d, --download        Downloads new wallpapers
   -c, --change          sets a wallpaper without downloading new ones
   -a, --all             Download new wallpapers and set one of them
   -l NUMBER, --limit NUMBER
                         Number of wallpapers to look for. Default = 1
-  -R, --any             Sets a random wallpaper form all the downloads
-  -r, --recent          Sets a random wallpaper from recent downloads
-  -p PATH, --path PATH  Sets the path where wallpapers are downloaded. The
-                        path has to be in quotes
+  -p PATH, --path PATH  Sets the download location for new wallpapers The img_path has to be
+                        in quotes
   -i IMAGE_PATH, --image IMAGE_PATH
-                        Sets a user specified image as wallpaper. Path has to
-                        be in quotes
+                        Sets a user specified image as wallpaper. Path has to be in quotes
+  -f FOLDER_PATH, --folder FOLDER_PATH
+                        Uses images stored in the specified folder Path has to be in quotes
   -s, --settings        change settings permanently
   -b, --back            Sets the previous image as wallpaper
 ```

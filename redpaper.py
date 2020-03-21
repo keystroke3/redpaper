@@ -229,6 +229,9 @@ class Fetch():
         try:
             from os import walk
             from os.path import join
+            if folder_path[0] == "~":
+                folder_path = folder_path.replace("~", HOME)
+                print(folder_path)
             for r, d, f in walk(folder_path):
                 img_list = [i for i in f if ".jpg" or ".png" in i for i in f]
                 img_paths = [join(r, img) for img in img_list]
@@ -243,15 +246,9 @@ class Fetch():
                 message = "Source folder changed"
                 print(message)
         except FileNotFoundError:
-            if folder_path[0] == "~":
-                folder_path = folder_path.replace("~", HOME)
-                print(folder_path)
-                try:
-                    Fetch().custom_folder(folder_path)
-                except FileNotFoundError:
-                    error = "ERROR: The img_path you entered does not exist."
-                    message = f"{red_error}{error}{normal}\n"
-                    print(message)
+            error = "ERROR: The img_path you entered does not exist."
+            message = f"{red_error}{error}{normal}\n"
+            print(message)
 
 
 class Settings():
@@ -505,7 +502,7 @@ class WallSet:
 
             else:
                 try:
-                    call(["feh", "--bg-fill", img_path])
+                    call(["feh", "--bg-scale", img_path])
                     with open("wallpaper.sh", "w") as start:
                         start.write(f'feh --bg-fill "{img_path}"')
                     call(["chmod", "+x", "wallpaper.sh"])
