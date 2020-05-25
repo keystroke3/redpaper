@@ -1,0 +1,8 @@
+include *.md
+include *.py
+include *.sh
+include LICENSE
+include src/redpaper.py
+recursive-include screenshots *.png
+recursive-include src *.py
+
