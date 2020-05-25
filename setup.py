@@ -8,14 +8,15 @@ setup(
 
     # metadata to display on PyPI
     author="Teddy Okello",
-    author_email="keystroke3@gmail.com",
+    author_email="keystroke33@gmail.com",
     description="A program to download and change desktop wallpapers",
     keywords="change wallpaper reddit in linux desktop gnome kde xfce budgie",
     url="https://github.com/keystroke3/redpaper",   # project home page, if any
+    license="GPLv3+",
     package_dir={'': 'src'},
     project_urls={
         "Bug Tracker": "https://github.com/keystroke3/redpaper/issues",
-        "Documentation": "https://github.com/keystroke3/redpaper/wiki",
+        "Documentation": "https://github.com/keystroke3/redpaper/blob/master/README.md",
         "Source Code": "https://github.com/keystroke3/redpaper",
     },
     classifiers=[
