@@ -205,8 +205,16 @@ class Fetch():
                                             f"{green}{new_file_name}, saved{normal}")
                                     wall_names[counter] = str(new_file_name)
                                     counter += 1
+                                except OSError:
+                                    raw_name_words = raw_file_name.split()
+                                    short_raw_name = '_'.join(raw_name_words[:3])
+                                    new_file_name = short_raw_name+"."+img.format.lower()
+                                    with open(new_file_name, "wb") as image:
+                                        image.write(r.content)
+                                        print(f"{green}{new_file_name}, saved{normal}")
+                                    wall_names[counter] = str(new_file_name)
                                 except FileNotFoundError:
-                                    continue
+                                        continue
 
                             else:
                                 print(f"{yellow}File skipped ...{green}")
