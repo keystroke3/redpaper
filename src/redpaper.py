@@ -508,19 +508,17 @@ class WallSet:
             elif check_de(de, ["sway"]):
                 call(["swaymsg", "output * bg %s fill" % img_path])
 
-            else:
-                try:
-                    call(["feh", "--bg-scale", img_path])
-                    with open("wallpaper.sh", "w") as start:
-                        start.write(f'feh --bg-fill "{img_path}"')
-                    call(["chmod", "+x", "wallpaper.sh"])
-                except Exception:
-                    print("""\nRedpaper has run into a problem. Please raise an issue on
-                    https://github.com/keystroke3/redpaper/issues.
-                    Make sure you include this error message:\n\n""")
-                    print(traceback.format_exc())
-
-                # sys.exit(1)
+        except TypeError:
+            try:
+                call(["feh", "--bg-scale", img_path])
+                with open("wallpaper.sh", "w") as start:
+                    start.write(f'feh --bg-fill "{img_path}"')
+                call(["chmod", "+x", "wallpaper.sh"])
+            except Exception:
+                print("""\nRedpaper has run into a problem. Please raise an issue on
+                https://github.com/keystroke3/redpaper/issues.
+                Make sure you include this error message:\n\n""")
+                print(traceback.format_exc())
 
         except Exception:
             print("""\nRedpaper has run into a problem. Please raise an issue on
