@@ -9,9 +9,9 @@ setup(
     # metadata to display on PyPI
     author="Teddy Okello",
     author_email="keystroke33@gmail.com",
-    description="A program to download and change desktop wallpapers",
+    description="A program to download and change desktop wallpapers from reddit",
     keywords="change wallpaper reddit in linux desktop gnome kde xfce budgie",
-    url="https://github.com/keystroke3/redpaper",   # project home page, if any
+    url="https://github.com/keystroke3/redpaper",
     license="GPLv3+",
     package_dir={'': 'src'},
     project_urls={
