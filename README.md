@@ -11,6 +11,9 @@ day and download them. You can then change the wallpaper using it.
 ![Main Menu](https://raw.githubusercontent.com/keystroke3/redpaper/master/screenshots/neo-redpaper.png)
 
 ## Installation
+If you are running Arch or Arch-based distro, you can install from aur:
+`yay -S redpaper-git`
+
 Redpaper only works on Linux systems at the moment, therefor only people running Linux  
 can use it.  
 ### Dependencies
