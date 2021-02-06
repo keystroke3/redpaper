@@ -158,31 +158,35 @@ class Fetch():
                 with Spinner():
                     try:
                         raw_file_name = link[0]
-                        if (os.path.isfile(raw_file_name + ".jpeg")):
+                        bad_chars = ('{', '}', '@', '$', '%', '^', '*', '/')
+                        clean_chars = [c for c in raw_file_name if c not in bad_chars]
+                        clean_file_name = ''.join(clean_chars).replace(' ', '_')
+
+                        if (os.path.isfile(clean_file_name + ".jpeg")):
                             print(
-                                f"\t{green}{raw_file_name} already exists{normal}")
-                            store_file_name = raw_file_name+".jpeg"
+                                f"\t{green}{clean_file_name} already exists{normal}")
+                            store_file_name = clean_file_name+".jpeg"
                             wall_names[counter] = store_file_name
                             counter += 1
                             continue
-                        elif (os.path.isfile(raw_file_name + ".png")):
+                        elif (os.path.isfile(clean_file_name + ".png")):
                             print(
-                                f"\t{green}{raw_file_name} already exists{normal}")
-                            file_name = raw_file_name+".png"
+                                f"\t{green}{clean_file_name} already exists{normal}")
+                            file_name = clean_file_name+".png"
                             wall_names[counter] = str(file_name)
                             counter += 1
                             continue
                         else:
                             try:
                                 print(
-                                    f"\t{green}checking image properties{normal}")
+                                    f"hecking image properties{normal}")
                                 image_link = link[1]
                                 payload = requests.get(image_link)
                                 img = Image.open(BytesIO(payload.content))
                                 width, height = img.size
                                 ar = width / height
                                 img.format.lower()
-                                new_file_name = raw_file_name+"."+img.format.lower()
+                                new_file_name = clean_file_name+"."+img.format.lower()
                             except KeyboardInterrupt:
                                 print("Keyboard interupt. Exiting...")
                                 break
@@ -206,7 +210,7 @@ class Fetch():
                                     wall_names[counter] = str(new_file_name)
                                     counter += 1
                                 except OSError:
-                                    raw_name_words = raw_file_name.split()
+                                    raw_name_words = clean_file_name.split('_')
                                     short_raw_name = '_'.join(raw_name_words[:3])
                                     new_file_name = short_raw_name+"."+img.format.lower()
                                     with open(new_file_name, "wb") as image:
