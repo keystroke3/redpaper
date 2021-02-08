@@ -600,12 +600,12 @@ def main():
                         help="sets a wallpaper without downloading new ones")
     parser.add_argument("-a", "--all", action="store_true",
                         help="Download new wallpapers and set one of them")
-    parser.add_argument("-l", "--limit", metavar="NUMBER",
+    parser.add_argument("-l", "--limit",
                         help="Number of wallpapers to look for. Default = 1")
     parser.add_argument("-p", "--path", metavar="PATH",
                         help="Sets the download location for new wallpapers\n"
                         "The img_path has to be in quotes")
-    parser.add_argument("-i", "--image", metavar="IMAGE_PATH",
+    parser.add_argument("-i", "--image",
                         help="Sets a user specified image as wallpaper.\n"
                         "Path has to be in quotes")
     parser.add_argument("-f", "--folder", action="append", nargs='*',
