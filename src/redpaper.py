@@ -57,12 +57,6 @@ pictures = config['settings']['download_dir']
 d_limit = int(config['settings']['download_limit'])
 
 
-# if not os.path.exists(settings_file):
-#     Settings().save_settings()
-# else:
-#     config.read(settings_file)
-
-
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
 
@@ -159,9 +153,12 @@ class Fetch():
                 with Spinner():
                     try:
                         raw_file_name = link[0]
-                        bad_chars = ('{', '}', '@', '$', '%', '^', '*', '/', ']','[')
-                        clean_chars = [c for c in raw_file_name if c not in bad_chars]
-                        clean_file_name = ''.join(clean_chars).replace(' ', '_')
+                        bad_chars = ('{', '}', '@', '$', '%',
+                                     '^', '*', '/', ']', '[')
+                        clean_chars = [
+                            c for c in raw_file_name if c not in bad_chars]
+                        clean_file_name = ''.join(
+                            clean_chars).replace(' ', '_')
 
                         if (os.path.isfile(clean_file_name + ".jpeg")):
                             print(
@@ -188,9 +185,6 @@ class Fetch():
                                 ar = width / height
                                 img.format.lower()
                                 new_file_name = clean_file_name+"."+img.format.lower()
-                            except KeyboardInterrupt:
-                                print("Keyboard interupt. Exiting...")
-                                break
                             except Exception:
                                 print(
                                     f"\t{red}Error Getting file ... skipping{green}")
@@ -212,14 +206,16 @@ class Fetch():
                                     counter += 1
                                 except OSError:
                                     raw_name_words = clean_file_name.split('_')
-                                    short_raw_name = '_'.join(raw_name_words[:3])
+                                    short_raw_name = '_'.join(
+                                        raw_name_words[:3])
                                     new_file_name = short_raw_name+"."+img.format.lower()
                                     with open(new_file_name, "wb") as image:
                                         image.write(r.content)
-                                        print(f"{green}{new_file_name}, saved{normal}")
+                                        print(
+                                            f"{green}{new_file_name}, saved{normal}")
                                     wall_names[counter] = str(new_file_name)
                                 except FileNotFoundError:
-                                        continue
+                                    continue
 
                             else:
                                 print(f"{yellow}File skipped ...{green}")
@@ -238,16 +234,30 @@ class Fetch():
         Notify.Notification.new("Finished downloading wallpapers").show()
 
     def custom_folder(self, folder_path):
+        from itertools import chain
         os.chdir(working_dir)
         try:
-            from os import walk
-            if folder_path[0] == "~":
-                folder_path = folder_path.replace("~", HOME)
-            if not os.path.isdir(folder_path):
-                raise FileNotFoundError
-            for r, d, f in walk(folder_path):
-                img_list = [i for i in f if ".jpg" or ".png" in i for i in f]
-                img_paths = [join(r, img) for img in img_list]
+            for p in folder_path:
+                if p[0] == "~":
+                    p = p.replace("~", HOME)
+                if p == ".":
+                    p = start_path
+                if not os.path.isdir(p):
+                    p = join(start_path, p)
+                img_list = []
+                img_paths = []
+                for r, d, f in os.walk(p):
+                    init_img_count = len(img_list)
+                    [img_list.append(i) for i in f if ".jpg" or ".jpeg" or ".png" in i for i in f]
+                    final_img_count = len(img_list)
+                    if final_img_count-init_img_count == 0:
+                        error = f"{r} does not contain any JPEG or PNG files."
+                        message = f"{red_error}{error}{normal}"
+                        print(message)
+                        continue
+                    [img_paths.append(join(r, img)) for img in img_list]
+                    message = f"{green}Added images form {r} {normal}"
+                    print(message)
                 img_dict = {}
                 for ind, img in enumerate(img_paths):
                     img_dict[ind] = img
@@ -256,18 +266,10 @@ class Fetch():
                 selection_point = 0
                 with open("point.pickle", "wb") as point:
                     pickle.dump(selection_point, point)
-                message = "Source folder changed"
-                print(message)
         except FileNotFoundError:
-            relative_path = join(start_path, folder_path)
-            print(relative_path)
-            if os.path.isdir(relative_path):
-                print(relative_path)
-                self.custom_folder(relative_path)
-            else:
-                error = "ERROR: The img_path you entered does not exist."
-                message = f"{red_error}{error}{normal}\n"
-                print(message)
+            error = "ERROR: The img_path you entered does not exist."
+            message = f"{red_error}{error}{normal}\n"
+            print(message)
 
 
 class Settings():
@@ -283,7 +285,7 @@ class Settings():
                 {red} q {normal}: {blue} Quit {normal}\n
                 >>>  """)
         if choice == "1":
-            self.change_path()
+            self.change_dl_path()
         if choice == "2":
             self.max_dl_choice()
         elif choice == "r" or choice == "R":
@@ -344,7 +346,7 @@ class Settings():
                 refresh()
                 self.max_dl_choice()
 
-    def change_path(self, new_path="", silent=False):
+    def change_dl_path(self, new_path="", silent=False):
         """
         Changes the img_path for new wallpaper downloads
         """
@@ -372,7 +374,8 @@ class Settings():
             config.set('settings', 'download_dir', str(new_path))
             Settings().save_settings()
             message = "Path changed successfully"
-            self.change_path()
+            print(message)
+            self.change_dl_path()
 
     def restore_default(self):
         refresh()
@@ -492,29 +495,26 @@ class WallSet:
                 ])
 
             elif check_de(de, ["xfce", "xubuntu"]):
-                # Light workaround here, just need to toggle the wallpaper
-                #  from null to the original filename
-                # xfconf props aren't 100% consistent so light workaround
-                #  for that too
-                props = check_de(['xfconf-query', '-c', 'xfce4-desktop', '-p',
-                                  '/backdrop', '-l'])\
-                    .decode("utf-8").split('\n')
-                for prop in props:
-                    if "last-image" in prop or "image-path" in prop:
-                        call([
-                            "xfconf-query", "-c", "xfce4-desktop", "-p", prop,
-                            "-s", "''"
-                        ])
-                        call([
-                            "xfconf-query", "-c", "xfce4-desktop", "-p", prop,
-                            "-s"
-                            "'%s'" % img_path
-                        ])
-                    if "image-show" in prop:
-                        call([
-                            "xfconf-query", "-c", "xfce4-desktop", "-p", prop,
-                            "-s", "'true'"
-                        ])
+                raise TypeError
+                # props = check_de(['xfconf-query', '-c', 'xfce4-desktop', '-p',
+                #                   '/backdrop', '-l'])\
+                #     .decode("utf-8").split('\n')
+                # for prop in props:
+                #     if "last-image" in prop or "image-path" in prop:
+                #         call([
+                #             "xfconf-query", "-c", "xfce4-desktop", "-p", prop,
+                #             "-s", "''"
+                #         ])
+                #         call([
+                #             "xfconf-query", "-c", "xfce4-desktop", "-p", prop,
+                #             "-s"
+                #             "'%s'" % img_path
+                #         ])
+                #     if "image-show" in prop:
+                #         call([
+                #             "xfconf-query", "-c", "xfce4-desktop", "-p", prop,
+                #             "-s", "'true'"
+                #         ])
 
             elif check_de(de, ["lubuntu", "Lubuntu"]):
                 call(["pcmanfm", "-w", "%s" % img_path])
@@ -608,7 +608,7 @@ def main():
     parser.add_argument("-i", "--image", metavar="IMAGE_PATH",
                         help="Sets a user specified image as wallpaper.\n"
                         "Path has to be in quotes")
-    parser.add_argument("-f", "--folder", metavar="FOLDER_PATH",
+    parser.add_argument("-f", "--folder", action="append", nargs='*',
                         help="Uses images stored in the specified folder\n"
                         "Path has to be in quotes")
     parser.add_argument("-s", "--settings", action="store_true",
@@ -619,7 +619,7 @@ def main():
     args = parser.parse_args()
     if args.settings:
         if args.path:
-            Settings().change_path(args.path, True)
+            Settings().change_dl_path(args.path, True)
             return
         elif args.limit:
             Settings().max_dl_choice(args.limit, True)
@@ -643,7 +643,8 @@ def main():
     elif args.image:
         WallSet().set_wallpaper(args.image)
     elif args.folder:
-        Fetch().custom_folder(args.folder)
+        print(args.folder)
+        Fetch().custom_folder(args.folder[0])
     elif args.all:
         img_path = WallSet().sequetial(0)
         if args.limit:
@@ -651,7 +652,8 @@ def main():
             Fetch().wall_dl()
         WallSet().set_wallpaper(img_path)
     else:
-        Home().main_menu()
+        print(args.__dict__)
+        #  Home().main_menu()
 
 
 if __name__ == '__main__':
