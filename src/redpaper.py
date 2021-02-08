@@ -20,7 +20,7 @@ from os.path import join
 gi.require_version('Notify', '0.7')
 
 normal = "\033[00m"
-red_error = "\033[31;47m"
+red_error = "\033[91m"
 green = "\033[92m"
 red = "\033[91m"
 blue = "\033[94m"
@@ -39,6 +39,7 @@ wall_data_file = join(working_dir, "wall_data.json")
 post_attr_file = join(working_dir, "post_attr")
 config = configparser.ConfigParser()
 system = platform.system()
+start_path = os.getcwd()
 
 if not os.path.exists(settings_file):
     config['settings'] = {
@@ -158,7 +159,7 @@ class Fetch():
                 with Spinner():
                     try:
                         raw_file_name = link[0]
-                        bad_chars = ('{', '}', '@', '$', '%', '^', '*', '/')
+                        bad_chars = ('{', '}', '@', '$', '%', '^', '*', '/', ']','[')
                         clean_chars = [c for c in raw_file_name if c not in bad_chars]
                         clean_file_name = ''.join(clean_chars).replace(' ', '_')
 
@@ -240,10 +241,10 @@ class Fetch():
         os.chdir(working_dir)
         try:
             from os import walk
-            from os.path import join
             if folder_path[0] == "~":
                 folder_path = folder_path.replace("~", HOME)
-                print(folder_path)
+            if not os.path.isdir(folder_path):
+                raise FileNotFoundError
             for r, d, f in walk(folder_path):
                 img_list = [i for i in f if ".jpg" or ".png" in i for i in f]
                 img_paths = [join(r, img) for img in img_list]
@@ -258,9 +259,15 @@ class Fetch():
                 message = "Source folder changed"
                 print(message)
         except FileNotFoundError:
-            error = "ERROR: The img_path you entered does not exist."
-            message = f"{red_error}{error}{normal}\n"
-            print(message)
+            relative_path = join(start_path, folder_path)
+            print(relative_path)
+            if os.path.isdir(relative_path):
+                print(relative_path)
+                self.custom_folder(relative_path)
+            else:
+                error = "ERROR: The img_path you entered does not exist."
+                message = f"{red_error}{error}{normal}\n"
+                print(message)
 
 
 class Settings():
@@ -447,7 +454,10 @@ class WallSet:
 
     def set_wallpaper(self, img_path):
         if system == "Linux":
-            self.linux_wallpaper(img_path)
+            if os.path.isfile(img_path):
+                self.linux_wallpaper(img_path)
+            else:
+                self.linux_wallpaper(join(start_path, img_path))
         else:
             print(f"{red}Sorry, your system is not supported yet.{normal}")
 
@@ -514,21 +524,23 @@ class WallSet:
 
         except TypeError:
             try:
-                call(["feh", "--bg-scale", img_path])
+                call(["xwallpaper", "--zoom", img_path])
                 with open("wallpaper.sh", "w") as start:
-                    start.write(f'feh --bg-fill "{img_path}"')
+                    start.write(f'xwallpaper --zoom "{img_path}"')
                 call(["chmod", "+x", "wallpaper.sh"])
             except Exception:
                 print("""\nRedpaper has run into a problem. Please raise an issue on
                 https://github.com/keystroke3/redpaper/issues.
                 Make sure you include this error message:\n\n""")
                 print(traceback.format_exc())
+                Notify.Notification.new("Redpaper encountered an issue").show()
 
         except Exception:
             print("""\nRedpaper has run into a problem. Please raise an issue on
                     https://github.com/keystroke3/redpaper/issues.
                     Make sure you include this error message:\n\n""")
             print(traceback.format_exc())
+            Notify.Notification.new("Redpaper encountered an issue").show()
 
 
 class Home():
@@ -629,7 +641,7 @@ def main():
             img_path = WallSet().sequetial(0)
             WallSet().set_wallpaper(img_path)
     elif args.image:
-        WallSet().linux_wallpaper(args.image)
+        WallSet().set_wallpaper(args.image)
     elif args.folder:
         Fetch().custom_folder(args.folder)
     elif args.all:
