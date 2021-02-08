@@ -259,7 +259,7 @@ class Fetch():
                     message = f"{green}Added images form {r} {normal}"
                     print(message)
                 img_dict = {}
-                for ind, img in enumerate(img_paths):
+                for ind, img in enumerate(img_paths, 1):
                     img_dict[ind] = img
                 with open(wall_data_file, "w") as wall_data:
                     json.dump(img_dict, wall_data)
@@ -330,7 +330,7 @@ class Settings():
             max_dl = int(d_limit)
             if max_dl > 100:
                 message = (
-                    f"{green}Please enter a value less than 100{normal}\n")
+                    f"{green}Please enter a value (1 - 100){normal}\n")
                 print(message)
             else:
                 config.set('settings', 'download_limit', str(max_dl))
@@ -609,7 +609,7 @@ def main():
                         help="Sets a user specified image as wallpaper.\n"
                         "Path has to be in quotes")
     parser.add_argument("-f", "--folder", action="append", nargs='*',
-                        help="Uses images stored in the specified folder\n"
+                        help="Uses images stored in the specified folders\n"
                         "Path has to be in quotes")
     parser.add_argument("-s", "--settings", action="store_true",
                         help="change settings permanently")
@@ -643,7 +643,6 @@ def main():
     elif args.image:
         WallSet().set_wallpaper(args.image)
     elif args.folder:
-        print(args.folder)
         Fetch().custom_folder(args.folder[0])
     elif args.all:
         img_path = WallSet().sequetial(0)
@@ -651,9 +650,11 @@ def main():
             Fetch().d_limit = int(args.limit)
             Fetch().wall_dl()
         WallSet().set_wallpaper(img_path)
+    elif args.back:
+        img_path = WallSet().sequetial(1)
+        WallSet().set_wallpaper(img_path)
     else:
-        print(args.__dict__)
-        #  Home().main_menu()
+        Home().main_menu()
 
 
 if __name__ == '__main__':
