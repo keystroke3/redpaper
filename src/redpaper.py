@@ -18,6 +18,8 @@ from PIL import Image
 from io import BytesIO
 from os.path import join
 gi.require_version('Notify', '0.7')
+from gi.repository import Notify
+
 
 normal = "\033[00m"
 red_error = "\033[91m"
@@ -142,7 +144,6 @@ class Fetch():
             print("Keyboard interupt. Closing... ")
 
     def wall_dl(self):
-        from gi.repository import Notify
         Notify.init("Redpaper")
         Notify.Notification.new("wallpaper download started").show()
         global counter
@@ -204,6 +205,8 @@ class Fetch():
                                             f"{green}{new_file_name}, saved{normal}")
                                     wall_names[counter] = str(new_file_name)
                                     counter += 1
+                                except FileNotFoundError:
+                                    continue
                                 except OSError:
                                     raw_name_words = clean_file_name.split('_')
                                     short_raw_name = '_'.join(
@@ -214,8 +217,6 @@ class Fetch():
                                         print(
                                             f"{green}{new_file_name}, saved{normal}")
                                     wall_names[counter] = str(new_file_name)
-                                except FileNotFoundError:
-                                    continue
 
                             else:
                                 print(f"{yellow}File skipped ...{green}")
@@ -521,6 +522,8 @@ class WallSet:
 
             elif check_de(de, ["sway"]):
                 call(["swaymsg", "output * bg %s fill" % img_path])
+            else:
+                raise TypeError
 
         except TypeError:
             try:
