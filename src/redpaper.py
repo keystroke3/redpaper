@@ -235,7 +235,6 @@ class Fetch():
         Notify.Notification.new("Finished downloading wallpapers").show()
 
     def custom_folder(self, folder_path):
-        from itertools import chain
         os.chdir(working_dir)
         try:
             for p in folder_path:
@@ -458,10 +457,21 @@ class WallSet:
 
     def set_wallpaper(self, img_path):
         if system == "Linux":
+            if "~" in img_path:
+                img_path = img_path.replace("~", HOME)
+            if img_path == ".":
+                img_path = start_path
             if os.path.isfile(img_path):
                 self.linux_wallpaper(img_path)
-            else:
+            elif os.path.isfile(join(start_path, img_path)):
                 self.linux_wallpaper(join(start_path, img_path))
+            elif os.path.isdir(img_path):
+                Fetch().custom_folder([img_path])
+            elif os.path.isdir(join(start_path, img_path)):
+                Fetch().custom_folder([join(start_path, img_path)])
+            else:
+                print(f"{red}Error, file path not recognized{normal}")
+
         else:
             print(f"{red}Sorry, your system is not supported yet.{normal}")
 
@@ -619,8 +629,15 @@ def main():
     parser.add_argument("-b", "--back", action="store_true",
                         help="Sets the previous image as wallpaper")
 
-    args = parser.parse_args()
-    if args.settings:
+    # args = parser.parse_args()
+    args, unknown = parser.parse_known_args()
+    if unknown:
+        if len(unknown) == 1:
+            WallSet().set_wallpaper(unknown[0])
+        else:
+            Fetch().custom_folder(unknown)
+            args.change
+    elif args.settings:
         if args.path:
             Settings().change_dl_path(args.path, True)
             return
@@ -647,6 +664,7 @@ def main():
         WallSet().set_wallpaper(args.image)
     elif args.folder:
         Fetch().custom_folder(args.folder[0])
+        args.change
     elif args.all:
         img_path = WallSet().sequetial(0)
         if args.limit:
@@ -658,7 +676,6 @@ def main():
         WallSet().set_wallpaper(img_path)
     else:
         Home().main_menu()
-
 
 if __name__ == '__main__':
     main()
