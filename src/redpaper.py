@@ -631,13 +631,8 @@ def main():
 
     # args = parser.parse_args()
     args, unknown = parser.parse_known_args()
-    if unknown:
-        if len(unknown) == 1:
-            WallSet().set_wallpaper(unknown[0])
-        else:
-            Fetch().custom_folder(unknown)
-            args.change
-    elif args.settings:
+
+    if args.settings:
         if args.path:
             Settings().change_dl_path(args.path, True)
             return
@@ -674,6 +669,12 @@ def main():
     elif args.back:
         img_path = WallSet().sequetial(1)
         WallSet().set_wallpaper(img_path)
+    elif unknown:
+        if len(unknown) == 1:
+            WallSet().set_wallpaper(unknown[0])
+        else:
+            Fetch().custom_folder(unknown)
+            args.change
     else:
         Home().main_menu()
 
