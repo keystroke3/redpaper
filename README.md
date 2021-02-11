@@ -52,7 +52,8 @@ To actaivate this mode, simply run redpaper without any arguments to bring it up
 
 
 ### Command Line Mode (CLI)
-You can run the redpaper command with arguments to perform tasks The list of arguments can be
+You can run the redpaper command with arguments to perform tasks. You can also pass a file name, folder name or list of folder names that contain images, in the form `redpaper FILE` `redpaper FOLDER1, FOLDER2...`
+The list of arguments can be
 listed by running `redpaper -h` or `redpaper --help`
 
 ## Options
