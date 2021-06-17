@@ -66,6 +66,7 @@ listed by running `redpaper -h` or `redpaper --help`
 |  -l | --limit LIMIT |  Number of wallpapers to look for. This is *not* the number of file that will be downloaded. A check is done to make sure the images are 16:9 aspect ratio or close to it. Default = 5
 |  -p | --path PATH | Sets the download location for new wallpapers. 
 |  -i | --image IMAGE | Sets a specified image as wallpaper. 
+|  -r | --sub STRING |Sets a user specified subreddit(s) as source 
 |  -f |  --folder [FOLDER ...] | Uses images stored in the specified folder. Multiple folders can be added 
 |  -s | --settings | change settings permanently. Use this in combination with other modifier flags to make them modifications permanent. E.g. `redpaper -sl 10` will set the look up limit to 10.
   
