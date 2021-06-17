@@ -17,7 +17,8 @@ from subprocess import call
 from PIL import Image
 from io import BytesIO
 from os.path import join
-gi.require_version('Notify', '0.7')
+
+gi.require_version("Notify", "0.7")
 from gi.repository import Notify
 
 
@@ -44,9 +45,10 @@ system = platform.system()
 start_path = os.getcwd()
 
 if not os.path.exists(settings_file):
-    config['settings'] = {
-        'download_dir': join(HOME, "Pictures", "Redpaper"),
-        'download_limit': 5}
+    config["settings"] = {
+        "download_dir": join(HOME, "Pictures", "Redpaper"),
+        "download_limit": 5,
+    }
     if not os.path.exists(working_dir):
         os.mkdir(working_dir)
     with open(settings_file, "w") as f:
@@ -55,17 +57,16 @@ if not os.path.exists(settings_file):
 else:
     config.read(settings_file)
 
-pictures = config['settings']['download_dir']
-d_limit = int(config['settings']['download_limit'])
+pictures = config["settings"]["download_dir"]
+d_limit = int(config["settings"]["download_limit"])
 
 
 def clear():
-    os.system('cls' if os.name == 'nt' else 'clear')
+    os.system("cls" if os.name == "nt" else "clear")
 
 
 def refresh():
-    """Prints the bunner with whatever message from the operation
-    """
+    """Prints the bunner with whatever message from the operation"""
     banner = """\n
     ██████╗ ███████╗██████╗ ██████╗  █████╗ ██████╗ ███████╗██████╗
     ██╔══██╗██╔════╝██╔══██╗██╔══██╗██╔══██╗██╔══██╗██╔════╝██╔══██╗
@@ -85,7 +86,7 @@ class Spinner:
     @staticmethod
     def spinning_cursor():
         while 1:
-            for cursor in '|/-\\':
+            for cursor in "|/-\\":
                 yield cursor
 
     def __init__(self, delay=None):
@@ -98,7 +99,7 @@ class Spinner:
             sys.stdout.write(next(self.spinner_generator))
             sys.stdout.flush()
             time.sleep(self.delay)
-            sys.stdout.write('\b')
+            sys.stdout.write("\b")
             sys.stdout.flush()
 
     def __enter__(self):
@@ -111,26 +112,27 @@ class Spinner:
         if exception is not None:
             return False
 
+
 def parse_subs(subs_list):
     if type(subs_list) == str:
-        if ' ' in subs_list:
-            subreddits = subs_list.replace(' ', '+')
-        elif ',' in subs_list:
-            subreddits = subs_list.replace(',', '+')
+        if " " in subs_list:
+            subreddits = subs_list.replace(" ", "+")
+        elif "," in subs_list:
+            subreddits = subs_list.replace(",", "+")
         else:
             subreddits = subs_list
         return subreddits
 
-class Fetch():
-    def __init__(self, sub_list=''):
+
+class Fetch:
+    def __init__(self, sub_list=""):
         if sub_list:
             self.subreddits = parse_subs(sub_list)
         else:
             try:
-                self.subreddits = config['settings']['subreddits']
+                self.subreddits = config["settings"]["subreddits"]
             except KeyError:
-                self.subreddits = 'wallpaper+wallpapers'
-                
+                self.subreddits = "wallpaper+wallpapers"
 
     def auth(self):
         os.chdir(working_dir)
@@ -172,41 +174,36 @@ class Fetch():
                 with Spinner():
                     try:
                         raw_file_name = link[0]
-                        bad_chars = ('{', '}', '@', '$', '%',
-                                     '^', '*', '/', ']', '[')
-                        clean_chars = [
-                            c for c in raw_file_name if c not in bad_chars]
-                        clean_file_name = ''.join(
-                            clean_chars).replace(' ', '_')
+                        bad_chars = ("{", "}", "@", "$", "%", "^", "*", "/", "]", "[")
+                        clean_chars = [c for c in raw_file_name if c not in bad_chars]
+                        clean_file_name = "".join(clean_chars).replace(" ", "_")
 
-                        if (os.path.isfile(clean_file_name + ".jpeg")):
-                            print(
-                                f"{green}{clean_file_name} already exists{normal}")
-                            store_file_name = clean_file_name+".jpeg"
+                        if os.path.isfile(clean_file_name + ".jpeg"):
+                            print(f"{green}{clean_file_name} already exists{normal}")
+                            store_file_name = clean_file_name + ".jpeg"
                             wall_names[counter] = store_file_name
                             counter += 1
                             continue
-                        elif (os.path.isfile(clean_file_name + ".png")):
-                            print(
-                                f"{green}{clean_file_name} already exists{normal}")
-                            file_name = clean_file_name+".png"
+                        elif os.path.isfile(clean_file_name + ".png"):
+                            print(f"{green}{clean_file_name} already exists{normal}")
+                            file_name = clean_file_name + ".png"
                             wall_names[counter] = str(file_name)
                             counter += 1
                             continue
                         else:
                             try:
-                                print(
-                                    f"checking image properties{normal}")
+                                print(f"checking image properties{normal}")
                                 image_link = link[1]
                                 payload = requests.get(image_link)
                                 img = Image.open(BytesIO(payload.content))
                                 width, height = img.size
                                 ar = width / height
                                 img.format.lower()
-                                new_file_name = clean_file_name+"."+img.format.lower()
+                                new_file_name = (
+                                    clean_file_name + "." + img.format.lower()
+                                )
                             except Exception:
-                                print(
-                                    f"{red}Error Getting file ... skipping{green}")
+                                print(f"{red}Error Getting file ... skipping{green}")
                                 continue
 
                             if ar > 1.2:
@@ -215,25 +212,23 @@ class Fetch():
                                 except Exception:
                                     continue
                                 try:
-                                    print(
-                                        f"{green}Downloading image... {green}")
+                                    print(f"{green}Downloading image... {green}")
                                     with open(new_file_name, "wb") as image:
                                         image.write(r.content)
-                                        print(
-                                            f"{green}{new_file_name}, saved{normal}")
+                                        print(f"{green}{new_file_name}, saved{normal}")
                                     wall_names[counter] = str(new_file_name)
                                     counter += 1
                                 except FileNotFoundError:
                                     continue
                                 except OSError:
-                                    raw_name_words = clean_file_name.split('_')
-                                    short_raw_name = '_'.join(
-                                        raw_name_words[:3])
-                                    new_file_name = short_raw_name+"."+img.format.lower()
+                                    raw_name_words = clean_file_name.split("_")
+                                    short_raw_name = "_".join(raw_name_words[:3])
+                                    new_file_name = (
+                                        short_raw_name + "." + img.format.lower()
+                                    )
                                     with open(new_file_name, "wb") as image:
                                         image.write(r.content)
-                                        print(
-                                            f"{green}{new_file_name}, saved{normal}")
+                                        print(f"{green}{new_file_name}, saved{normal}")
                                     wall_names[counter] = str(new_file_name)
 
                             else:
@@ -266,9 +261,14 @@ class Fetch():
                 img_paths = []
                 for r, d, f in os.walk(p):
                     init_img_count = len(img_list)
-                    [img_list.append(i) for i in f if ".jpg" or ".jpeg" or ".png" in i for i in f]
+                    [
+                        img_list.append(i)
+                        for i in f
+                        if ".jpg" or ".jpeg" or ".png" in i
+                        for i in f
+                    ]
                     final_img_count = len(img_list)
-                    if final_img_count-init_img_count == 0:
+                    if final_img_count - init_img_count == 0:
                         error = f"{r} does not contain any JPEG or PNG files."
                         message = f"{red_error}{error}{normal}"
                         print(message)
@@ -290,22 +290,27 @@ class Fetch():
             print(message)
 
 
-class Settings():
+class Settings:
     def main_settings(self):
         refresh()
-        choice = input(f"""{green}
+        choice = input(
+            f"""{green}
                 Welcome to redpaper settings menu.
                 Choose an option:\n{normal}
                 {red} 1 {normal}: {blue} Change download location{normal} \n
                 {red} 2 {normal}: {blue} Change the download limit{normal}\n
+                {red} 3 {normal}: {blue} Change the source subreddits{normal}\n
                 {red} r {normal}: {blue} Reset to default {normal}\n
                 {red} h {normal}: {blue} Back to home {normal}\n
                 {red} q {normal}: {blue} Quit {normal}\n
-                >>>  """)
+                >>>  """
+        )
         if choice == "1":
             self.change_dl_path()
         if choice == "2":
             self.max_dl_choice()
+        if choice == "3":
+            self.change_subs()
         elif choice == "r" or choice == "R":
             self.restore_default()
             self.main_settings()
@@ -329,6 +334,35 @@ class Settings():
                 f.write("")
             Settings().save_settings()
 
+    def change_subs(self, subs_list="", silent=False):
+        """
+        Allows the user to select a max number of wallpaper download attemts
+        """
+
+        if not silent:
+            refresh()
+            subs_list = input(
+                f"""{green}
+                Enter the subreddits you want seperated by space or comma
+                e.g. wallpaper wallpapers or wallpaper,wallpapers
+                {normal}\n
+                {red}x{normal}: {blue} main menu{normal}
+                {red}q{normal}: {blue} Quit{normal}
+                >>> """
+            )
+        if subs_list.lower() == "x":
+            self.main_settings()
+            return
+        elif subs_list.lower() == "q":
+            clear()
+        config.set("settings", "subreddits", str(parse_subs(subs_list)))
+        self.save_settings()
+        # else:
+        #     error = "You did not enter a number"
+        #     message = f"{red_error}{error}{normal}\n"
+        #     refresh()
+        #     self.max_dl_choice()
+
     def max_dl_choice(self, d_limit="", silent=False):
         """
         Allows the user to select a max number of wallpaper download attemts
@@ -336,22 +370,23 @@ class Settings():
 
         if not silent:
             refresh()
-            d_limit = input(f"""{green}
+            d_limit = input(
+                f"""{green}
                 Enter the maximum number of wallpaper to attemt to download
                 The number cannot exceed 100.
                 Current value is {d_limit}
                 {normal}\n
                 {red}x{normal}: {blue} main menu{normal}
                 {red}q{normal}: {blue} Quit{normal}
-                >>> """)
+                >>> """
+            )
         try:
             max_dl = int(d_limit)
             if max_dl > 100:
-                message = (
-                    f"{green}Please enter a value (1 - 100){normal}\n")
+                message = f"{green}Please enter a value (1 - 100){normal}\n"
                 print(message)
             else:
-                config.set('settings', 'download_limit', str(max_dl))
+                config.set("settings", "download_limit", str(max_dl))
                 self.save_settings()
         except TypeError:
             max_dl = str(d_limit)
@@ -371,14 +406,16 @@ class Settings():
         if not new_path:
 
             refresh()
-            new_path = input(f"""
+            new_path = input(
+                f"""
                             {green}Enter the complete img_path to the new location.
                             This is case sensivite. "Pics" and "pics" are different
                             e.g. /home/user/Pictures\n
                             Current img_path is: {pictures}\n{normal}
                             {red}x{normal} : {blue}main settings{normal}
                             {red}q{normal}: {blue} Quit{normal}
-                            >>> """)
+                            >>> """
+            )
         if new_path == "x":
             self.main_settings()
             return
@@ -389,7 +426,7 @@ class Settings():
             error = "ERROR: The img_path you entered does not exist."
             message = f"{red_error}{error}{normal}\n"
         else:
-            config.set('settings', 'download_dir', str(new_path))
+            config.set("settings", "download_dir", str(new_path))
             Settings().save_settings()
             message = "Path changed successfully"
             print(message)
@@ -397,20 +434,22 @@ class Settings():
 
     def restore_default(self):
         refresh()
-        choice = input(f"""{green}
+        choice = input(
+            f"""{green}
                 This section allows you to reset all the settings to default.
                 Note that this cannot be undone. \n{normal}
                 You sure you want to continue?\n
                 {green} 1: Yes {normal} \n
                 {red} 2: No {normal}\n
-                >>> """)
+                >>> """
+        )
         if choice == "2":
             self.main_settings()
             return
         elif choice == "1":
-            config.set('settings', 'download_dir',
-                       join(HOME, "Pictures", "Redpaper"))
-            config.set('settings', 'download_limit', "5")
+            config.set("settings", "download_dir", join(HOME, "Pictures", "Redpaper"))
+            config.set("settings", "download_limit", "5")
+            config.set("settings", "subreddits", "wallpaper+wallpapers")
             self.save_settings()
         else:
             error = "ERROR: Choice was not understood"
@@ -429,7 +468,7 @@ class WallSet:
 
     def sequetial(self, go_back):
         try:
-            with open(wall_data_file, encoding='utf-8') as data:
+            with open(wall_data_file, encoding="utf-8") as data:
                 saved_walls = json.load(data)
         except (FileNotFoundError, ValueError):
             Fetch().wall_dl()
@@ -448,23 +487,37 @@ class WallSet:
                 selection_point -= 1
             elif selection_point == len(saved_walls) and go_back == 0:
                 selection_point = 1
-            elif (selection_point < len(saved_walls) and
-                  selection_point != 1 and go_back == 1):
+            elif (
+                selection_point < len(saved_walls)
+                and selection_point != 1
+                and go_back == 1
+            ):
                 selection_point -= 1
-            elif (selection_point < len(saved_walls) and
-                  go_back == 0):
+            elif selection_point < len(saved_walls) and go_back == 0:
                 selection_point += 1
-            elif (selection_point < len(saved_walls) and
-                  selection_point == 1 and go_back == 0):
+            elif (
+                selection_point < len(saved_walls)
+                and selection_point == 1
+                and go_back == 0
+            ):
                 selection_point += 1
-            elif (selection_point < len(saved_walls) and
-                  selection_point == 1 and go_back == 1):
+            elif (
+                selection_point < len(saved_walls)
+                and selection_point == 1
+                and go_back == 1
+            ):
                 selection_point = len(saved_walls)
-            elif (selection_point < len(saved_walls) and
-                  selection_point == 0 and go_back == 0):
+            elif (
+                selection_point < len(saved_walls)
+                and selection_point == 0
+                and go_back == 0
+            ):
                 selection_point = 1
-            elif (selection_point < len(saved_walls) and
-                  selection_point == 0 and go_back == 1):
+            elif (
+                selection_point < len(saved_walls)
+                and selection_point == 0
+                and go_back == 1
+            ):
                 selection_point = len(saved_walls)
             img_name = str(saved_walls.get(str(selection_point)))
         # the new value of selection point is stored for the next run
@@ -496,32 +549,53 @@ class WallSet:
     def linux_wallpaper(self, img_path):
         check_de = self.check_de
         # wall_change = self.wall_change
-        de = os.environ.get('DESKTOP_SESSION')
+        de = os.environ.get("DESKTOP_SESSION")
         try:
-            if check_de(de, [
-                    "gnome", "gnome-xorg", "gnome-wayland", "unity", "ubuntu",
-                    "ubuntu-xorg", "budgie-desktop"
-            ]):
-                call([
-                    "gsettings", "set", "org.gnome.desktop.background",
-                    "picture-uri",
-                    "file://%s" % img_path
-                ])
+            if check_de(
+                de,
+                [
+                    "gnome",
+                    "gnome-xorg",
+                    "gnome-wayland",
+                    "unity",
+                    "ubuntu",
+                    "ubuntu-xorg",
+                    "budgie-desktop",
+                ],
+            ):
+                call(
+                    [
+                        "gsettings",
+                        "set",
+                        "org.gnome.desktop.background",
+                        "picture-uri",
+                        "file://%s" % img_path,
+                    ]
+                )
 
             elif check_de(de, ["cinnamon"]):
-                call([
-                    "gsettings", "set", "org.cinnamon.desktop.background",
-                    "picture-uri",
-                    "file://%s" % img_path
-                ])
+                call(
+                    [
+                        "gsettings",
+                        "set",
+                        "org.cinnamon.desktop.background",
+                        "picture-uri",
+                        "file://%s" % img_path,
+                    ]
+                )
 
             # TODO: fix this code to better support pantheon
 
             elif check_de(de, ["mate"]):
-                call([
-                    "gsettings", "set", "org.mate.background", "picture-filename",
-                    "'%s'" % img_path
-                ])
+                call(
+                    [
+                        "gsettings",
+                        "set",
+                        "org.mate.background",
+                        "picture-filename",
+                        "'%s'" % img_path,
+                    ]
+                )
 
             elif check_de(de, ["xfce", "xubuntu"]):
                 raise TypeError
@@ -560,24 +634,29 @@ class WallSet:
                     start.write(f'xwallpaper --zoom "{img_path}"')
                 call(["chmod", "+x", "wallpaper.sh"])
             except Exception:
-                print("""\nRedpaper has run into a problem. Please raise an issue on
+                print(
+                    """\nRedpaper has run into a problem. Please raise an issue on
                 https://github.com/keystroke3/redpaper/issues.
-                Make sure you include this error message:\n\n""")
+                Make sure you include this error message:\n\n"""
+                )
                 print(traceback.format_exc())
                 Notify.Notification.new("Redpaper encountered an issue").show()
 
         except Exception:
-            print("""\nRedpaper has run into a problem. Please raise an issue on
+            print(
+                """\nRedpaper has run into a problem. Please raise an issue on
                     https://github.com/keystroke3/redpaper/issues.
-                    Make sure you include this error message:\n\n""")
+                    Make sure you include this error message:\n\n"""
+            )
             print(traceback.format_exc())
             Notify.Notification.new("Redpaper encountered an issue").show()
 
 
-class Home():
+class Home:
     def main_menu(self):
         refresh()
-        choice = input(f"""{green}
+        choice = input(
+            f"""{green}
                 Welcome to Redpaper. This is a TUI used to
                 control the underlying Redpaper program.
                 Select an option:\n{normal}
@@ -587,7 +666,8 @@ class Home():
             {red} 4 {normal}: {blue} Settings{normal}\n
             {red} 5 {normal}: {blue} Help {normal}\n
             {red} x {normal}: {blue} exit {normal}\n
-                >>>  """)
+                >>>  """
+        )
         if choice == "1":
             refresh()
             Fetch().wall_dl()
@@ -610,9 +690,11 @@ class Home():
             # TODO: create a help page
             message = "HELP\n"
             refresh()
-            print(f"""
+            print(
+                f"""
                 {green}You can check the wiki for help:
-                https://github.com/keystroke3/redpaper/wiki{normal}""")
+                https://github.com/keystroke3/redpaper/wiki{normal}"""
+            )
             self.main_menu()
         elif choice == "x" or choice == "X":
             clear()
@@ -624,29 +706,50 @@ def main():
     parser = argparse.ArgumentParser(
         description="""This is a simple program that allows you to change
     you desktop wallpaper. It fetches the best wallpapers from Reddit
-    and sets one as the wallpaper.""")
-    parser.add_argument("-d", "--download", action="store_true",
-                        help="Downloads new wallpapers")
-    parser.add_argument("-c", "--change", action="store_true",
-                        help="sets a wallpaper without downloading new ones")
-    parser.add_argument("-a", "--all", action="store_true",
-                        help="Download new wallpapers and set one of them")
-    parser.add_argument("-l", "--limit",
-                        help="Number of wallpapers to look for. Default = 1")
-    parser.add_argument("-p", "--path", metavar="PATH",
-                        help="Sets the download location for new wallpapers\n"
-                        "The img_path has to be in quotes")
-    parser.add_argument("-i", "--image",
-                        help="Sets a user specified image as wallpaper.\n")
-    parser.add_argument("-r", "--sub",
-                        help="Sets a user specified subreddit(s) as source.\n")
-    parser.add_argument("-f", "--folder",
-                        help="Uses images stored in the specified folders\n"
-                        "Path has to be in quotes")
-    parser.add_argument("-s", "--settings", action="store_true",
-                        help="change settings permanently")
-    parser.add_argument("-b", "--back", action="store_true",
-                        help="Sets the previous image as wallpaper")
+    and sets one as the wallpaper."""
+    )
+    parser.add_argument(
+        "-d", "--download", action="store_true", help="Downloads new wallpapers"
+    )
+    parser.add_argument(
+        "-c",
+        "--change",
+        action="store_true",
+        help="sets a wallpaper without downloading new ones",
+    )
+    parser.add_argument(
+        "-a",
+        "--all",
+        action="store_true",
+        help="Download new wallpapers and set one of them",
+    )
+    parser.add_argument(
+        "-l", "--limit", help="Number of wallpapers to look for. Default = 1"
+    )
+    parser.add_argument(
+        "-p",
+        "--path",
+        metavar="PATH",
+        help="Sets the download location for new wallpapers\n"
+        "The img_path has to be in quotes",
+    )
+    parser.add_argument(
+        "-i", "--image", help="Sets a user specified image as wallpaper.\n"
+    )
+    parser.add_argument(
+        "-r", "--sub", help="Sets a user specified subreddit(s) as source.\n"
+    )
+    parser.add_argument(
+        "-f",
+        "--folder",
+        help="Uses images stored in the specified folders\n" "Path has to be in quotes",
+    )
+    parser.add_argument(
+        "-s", "--settings", action="store_true", help="change settings permanently"
+    )
+    parser.add_argument(
+        "-b", "--back", action="store_true", help="Sets the previous image as wallpaper"
+    )
 
     # args = parser.parse_args()
     args, unknown = parser.parse_known_args()
@@ -658,11 +761,14 @@ def main():
         elif args.limit:
             Settings().max_dl_choice(args.limit, True)
             return
+        elif args.sub:
+            Settings().change_subs(args.sub, True)
+            return
         else:
             print("No option selected or selection not understood")
             return
     if args.download:
-        sub_list = ''
+        sub_list = ""
         if args.sub:
             sub_list = args.sub
         if args.limit:
@@ -697,5 +803,5 @@ def main():
             args.change
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
