@@ -3,8 +3,8 @@
 from setuptools import setup
 setup(
     name="redpaper",
-    version="0.1.0",
-    install_requires=['docutils>=0.3', 'praw>=6.2.0', 'pillow', 'requests', 'pygobject'],
+    version="0.2.0",
+    install_requires=['docutils>=0.3', 'praw', 'pillow', 'requests', 'pygobject'],
 
     # metadata to display on PyPI
     author="Teddy Okello",
