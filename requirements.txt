@@ -257,7 +257,7 @@ ufw==0.36
 Unidecode==1.1.1
 unrardll==0.1.4
 update-checker==0.18.0
-urllib3==1.25.11
+urllib3==1.26.5
 urwid==2.1.2
 virtualenv==20.2.1
 wcwidth==0.2.5
