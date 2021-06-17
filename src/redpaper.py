@@ -111,8 +111,27 @@ class Spinner:
         if exception is not None:
             return False
 
+def parse_subs(subs_list):
+    if type(subs_list) == str:
+        if ' ' in subs_list:
+            subreddits = subs_list.replace(' ', '+')
+        elif ',' in subs_list:
+            subreddits = subs_list.replace(',', '+')
+        else:
+            subreddits = subs_list
+        return subreddits
 
 class Fetch():
+    def __init__(self, sub_list=''):
+        if sub_list:
+            self.subreddits = parse_subs(sub_list)
+        else:
+            try:
+                self.subreddits = config['settings']['subreddits']
+            except KeyError:
+                self.subreddits = 'wallpaper+wallpapers'
+                
+
     def auth(self):
         os.chdir(working_dir)
         global counter
@@ -125,9 +144,8 @@ class Fetch():
             commaScopes="all",
         )
         # collect data from reddit
-        subreddits = "wallpaper+wallpapers"
-        wallpaper = reddit.subreddit(subreddits)
 
+        wallpaper = reddit.subreddit(self.subreddits)
         top_paper = wallpaper.hot(limit=d_limit)
         try:
             with open("post_attr", "w") as attrs:
@@ -163,14 +181,14 @@ class Fetch():
 
                         if (os.path.isfile(clean_file_name + ".jpeg")):
                             print(
-                                f"\t{green}{clean_file_name} already exists{normal}")
+                                f"{green}{clean_file_name} already exists{normal}")
                             store_file_name = clean_file_name+".jpeg"
                             wall_names[counter] = store_file_name
                             counter += 1
                             continue
                         elif (os.path.isfile(clean_file_name + ".png")):
                             print(
-                                f"\t{green}{clean_file_name} already exists{normal}")
+                                f"{green}{clean_file_name} already exists{normal}")
                             file_name = clean_file_name+".png"
                             wall_names[counter] = str(file_name)
                             counter += 1
@@ -178,7 +196,7 @@ class Fetch():
                         else:
                             try:
                                 print(
-                                    f"hecking image properties{normal}")
+                                    f"checking image properties{normal}")
                                 image_link = link[1]
                                 payload = requests.get(image_link)
                                 img = Image.open(BytesIO(payload.content))
@@ -188,7 +206,7 @@ class Fetch():
                                 new_file_name = clean_file_name+"."+img.format.lower()
                             except Exception:
                                 print(
-                                    f"\t{red}Error Getting file ... skipping{green}")
+                                    f"{red}Error Getting file ... skipping{green}")
                                 continue
 
                             if ar > 1.2:
@@ -619,9 +637,10 @@ def main():
                         help="Sets the download location for new wallpapers\n"
                         "The img_path has to be in quotes")
     parser.add_argument("-i", "--image",
-                        help="Sets a user specified image as wallpaper.\n"
-                        "Path has to be in quotes")
-    parser.add_argument("-f", "--folder", action="append", nargs='*',
+                        help="Sets a user specified image as wallpaper.\n")
+    parser.add_argument("-r", "--sub",
+                        help="Sets a user specified subreddit(s) as source.\n")
+    parser.add_argument("-f", "--folder",
                         help="Uses images stored in the specified folders\n"
                         "Path has to be in quotes")
     parser.add_argument("-s", "--settings", action="store_true",
@@ -643,11 +662,12 @@ def main():
             print("No option selected or selection not understood")
             return
     if args.download:
+        sub_list = ''
+        if args.sub:
+            sub_list = args.sub
         if args.limit:
             Fetch().d_limit = int(args.limit)
-            Fetch().wall_dl()
-        else:
-            Fetch().wall_dl()
+        Fetch(sub_list).wall_dl()
     elif args.change:
         if args.back:
             img_path = WallSet().sequetial(1)
@@ -675,8 +695,7 @@ def main():
         else:
             Fetch().custom_folder(unknown)
             args.change
-    else:
-        Home().main_menu()
+
 
 if __name__ == '__main__':
     main()
