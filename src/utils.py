@@ -3,8 +3,16 @@ import threading
 import time
 import configparser
 import sys
-from xdg.BaseDirectory import xdg_cache_home
 from os.path import join
+
+if sys.executable.startswith("/home/"):
+    from xdg import xdg_cache_home
+
+    cache_dir = xdg_cache_home()
+else:
+    from xdg.BaseDirectory import xdg_cache_home
+
+    cache_dir = xdg_cache_home
 
 
 colors = {
@@ -20,7 +28,7 @@ message = ""
 wall_names = {}
 HOME = os.environ.get("HOME")
 
-working_dir = join(xdg_cache_home, "redpaper")
+working_dir = join(cache_dir, "redpaper")
 settings_file = join(working_dir, "settings.ini")
 wall_data_file = join(working_dir, "wall_data.json")
 post_attr_file = join(working_dir, "post_attr")
