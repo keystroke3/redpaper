@@ -1,11 +1,18 @@
 #!/usr/bin/python3
 
 from setuptools import setup
+
 setup(
     name="redpaper",
     version="0.2.0",
-    install_requires=['docutils>=0.3', 'praw', 'pillow', 'requests', 'pygobject'],
-
+    install_requires=[
+        "docutils>=0.3",
+        "praw",
+        "pillow",
+        "requests",
+        "pygobject",
+        "xdg",
+    ],
     # metadata to display on PyPI
     author="Teddy Okello",
     author_email="keystroke33@gmail.com",
@@ -13,7 +20,7 @@ setup(
     keywords="change wallpaper reddit in linux desktop gnome kde xfce budgie",
     url="https://github.com/keystroke3/redpaper",
     license="GPLv3+",
-    package_dir={'': 'src'},
+    package_dir={"": "src"},
     project_urls={
         "Bug Tracker": "https://github.com/keystroke3/redpaper/issues",
         "Documentation": "https://github.com/keystroke3/redpaper/blob/master/README.md",
@@ -21,5 +28,5 @@ setup(
     },
     classifiers=[
         "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
-    ]
+    ],
 )
