@@ -3,6 +3,7 @@ import threading
 import time
 import configparser
 import sys
+from xdg import xdg_cache_home as cache
 from os.path import join
 
 
@@ -19,7 +20,7 @@ message = ""
 wall_names = {}
 HOME = os.environ.get("HOME")
 
-working_dir = join(HOME, ".redpaper")
+working_dir = join(cache(), "redpaper")
 settings_file = join(working_dir, "settings.ini")
 wall_data_file = join(working_dir, "wall_data.json")
 post_attr_file = join(working_dir, "post_attr")
@@ -32,6 +33,7 @@ def get_config():
     if not os.path.exists(settings_file):
         conf["settings"] = {
             "download_dir": join(HOME, "Pictures", "Redpaper"),
+            "subreddits": "wallpaper+wallpapers",
             "download_limit": 5,
         }
         if not os.path.exists(working_dir):

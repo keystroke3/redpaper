@@ -11,7 +11,6 @@ from io import BytesIO
 from os.path import join
 from utils import (
     colors,
-    clear,
     Spinner,
     working_dir,
     HOME,
