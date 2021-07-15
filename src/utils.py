@@ -3,7 +3,7 @@ import threading
 import time
 import configparser
 import sys
-from xdg import xdg_cache_home as cache
+from xdg.BaseDirectory import xdg_cache_home
 from os.path import join
 
 
@@ -20,7 +20,7 @@ message = ""
 wall_names = {}
 HOME = os.environ.get("HOME")
 
-working_dir = join(cache(), "redpaper")
+working_dir = join(xdg_cache_home, "redpaper")
 settings_file = join(working_dir, "settings.ini")
 wall_data_file = join(working_dir, "wall_data.json")
 post_attr_file = join(working_dir, "post_attr")

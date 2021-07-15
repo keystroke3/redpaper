@@ -1,8 +1,8 @@
 #!/usr/bin/python3
-
 import argparse
 import platform
 import os
+import sys
 from utils import (
     colors,
     clear,
@@ -118,7 +118,8 @@ def main():
 
     # args = parser.parse_args()
     args, unknown = parser.parse_known_args()
-
+    if not len(sys.argv) > 1:
+        Home().main_menu()
     if args.settings:
         if args.path:
             Settings().change_dl_path(args.path, True)
