@@ -1,4 +1,4 @@
-certifi==2021.5.30
+certifi==2022.12.7
 chardet==4.0.0
 docutils==0.17.1
 idna==2.10
